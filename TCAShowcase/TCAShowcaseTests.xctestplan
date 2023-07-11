@@ -1,0 +1,32 @@
+{
+  "configurations" : [
+    {
+      "id" : "5841702B-CB15-4A9A-85AD-544D49278AD8",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "codeCoverage" : {
+      "targets" : [
+        {
+          "containerPath" : "container:TCAShowcase.xcodeproj",
+          "identifier" : "222E23CE2A5D29AD0082C1DC",
+          "name" : "TCAShowcase"
+        }
+      ]
+    }
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:TCAShowcase.xcodeproj",
+        "identifier" : "222E23DE2A5D29AF0082C1DC",
+        "name" : "TCAShowcaseTests"
+      }
+    }
+  ],
+  "version" : 1
+}
