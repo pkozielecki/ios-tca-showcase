@@ -49,7 +49,7 @@ struct AddAssetView: View {
 
                         //  A footer with add assets button:
                         PrimaryButton(label: "Add selected \(formattedSelectedAssetsCount)asset(s) to ❤️") {
-                            store.send(.confirmAssetSelection)
+                            store.send(.confirmAssetSelection(ids: viewStore.state.selectedAssetsIDs))
                         }
                         .disabled(!viewStore.state.selectedAssetsIDs.isEmpty)
                     }

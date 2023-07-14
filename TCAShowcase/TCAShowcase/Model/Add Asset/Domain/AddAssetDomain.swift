@@ -10,14 +10,14 @@ enum AddAssetDomain {
 
     struct State: Equatable {
         var availableAssets: [Asset] = []
-        var selectedAssetsIDs: Set<String> = []
+        var selectedAssetsIDs: [String] = []
         var viewState: AddAssetViewState = .loading
     }
 
     enum Action: Equatable {
         case loadInitialAssets
         case selectAsset(id: String)
-        case confirmAssetSelection
+        case confirmAssetSelection(ids: [String])
         case goBack
     }
 
@@ -32,7 +32,9 @@ enum AddAssetDomain {
             print("loadInitialAssets")
             return .none
         case let .selectAsset(id):
-            state.selectedAssetsIDs.insert(id)
+            if !state.selectedAssetsIDs.contains(id) {
+                state.selectedAssetsIDs.append(id)
+            }
             return .none
         case .confirmAssetSelection:
             print("Select asset")

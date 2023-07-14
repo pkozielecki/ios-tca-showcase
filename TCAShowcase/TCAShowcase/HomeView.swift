@@ -60,10 +60,9 @@ struct HomeView<Router: SwiftUINavigationRouter, MainStore: Store<AssetsListDoma
 private extension HomeView {
 
     func makeAddAssetView() -> some View {
-        let store = Store(
-            initialState: AddAssetDomain.State(),
-            reducer: AddAssetDomain.reducer,
-            environment: AddAssetDomain.Environment(router: router)
+        let store = store.scope(
+            state: \.addAssetState,
+            action: AssetsListDomain.Action.addAssetsToFavourites
         )
         return AddAssetView(store: store)
     }
