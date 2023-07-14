@@ -3,9 +3,17 @@
 //  TCA Showcase
 //
 
+import ComposableArchitecture
 import SwiftUI
 
 struct AssetsListView: View {
+    let store: Store<AssetsListDomain.State, AssetsListDomain.Action>
+    @ObservedObject var viewStore: ViewStore<AssetsListDomain.State, AssetsListDomain.Action>
+
+    init(store: Store<AssetsListDomain.State, AssetsListDomain.Action>) {
+        self.store = store
+        viewStore = ViewStore(store)
+    }
 
     var body: some View {
         ZStack {
@@ -23,7 +31,9 @@ struct AssetsListView: View {
 
                     PrimaryButton(
                         label: "Select favourite assets",
-                        onTapCallback: { print("Select favourite assets tapped") }
+                        onTapCallback: {
+                            store.send(.addAssetTapped)
+                        }
                     )
                 }
                 .padding(20)
@@ -51,9 +61,9 @@ struct AssetsListView: View {
                         ForEach(assets) { data in
                             FavouriteAssetCellView(
                                 data: data,
-                                onSelectTapped: onAssetSelected,
-                                onEditTapped: onEditAssetSelected,
-                                onDeleteTapped: onAssetRemovalRequest
+                                onSelectTapped: { viewStore.send(.selectAsset(id: $0)) },
+                                onEditTapped: { print("Edit tapped: \($0)") },
+                                onDeleteTapped: { print("Delete tapped: \($0)") }
                             )
                             .noInsetsCell()
                         }
@@ -61,9 +71,12 @@ struct AssetsListView: View {
                 }
                 .navigationTitle("Assets list")
                 .refreshable {
-                    // TODO: refresh assets.
+                    viewStore.send(.loadAssetsPerformanceRequested)
                 }
             }
+        }
+        .onAppear {
+            viewStore.send(.loadAssetsPerformanceRequested)
         }
     }
 }
@@ -71,32 +84,40 @@ struct AssetsListView: View {
 private extension AssetsListView {
 
     var hasNoAssets: Bool {
-        true
+        if case .noFavouriteAssets = viewStore.viewState {
+            return true
+        }
+        return false
     }
 
     var assets: [FavouriteAssetCellView.Data] {
-        []
+        switch viewStore.viewState {
+        case let .loaded(assets, _), let .loading(assets):
+            return assets
+        default:
+            return []
+        }
     }
 
     var lastUpdated: String {
-        ""
-    }
-
-    func onAssetSelected(id: String) {
-        print("Asset selected: \(id)")
-    }
-
-    func onEditAssetSelected(id: String) {
-        print("Edit asset selected: \(id)")
-    }
-
-    func onAssetRemovalRequest(id: String) {
-        print("Asset removal requested: \(id)")
+        switch viewStore.viewState {
+        case let .loaded(_, date):
+            return date
+        default:
+            return ""
+        }
     }
 }
 
 struct AssetsListView_Previews: PreviewProvider {
     static var previews: some View {
-        AssetsListView()
+        let store = Store(
+            initialState: AssetsListDomain.State(),
+            reducer: AssetsListDomain.reducer,
+            environment: AssetsListDomain.Environment(
+                router: PreviewSwiftUINavigationRouter()
+            )
+        )
+        AssetsListView(store: store)
     }
 }

@@ -6,7 +6,7 @@
 import SwiftUI
 
 /// A simple model representing an asset.
-struct Asset: Codable, Equatable, Hashable {
+struct Asset: Codable, Equatable, Hashable, Identifiable {
     /// An asset id, eg. USD, PLN, etc.
     let id: String
 

@@ -63,6 +63,12 @@ extension FavouriteAssetCellView {
 }
 
 extension FavouriteAssetCellView.Data {
+    init(asset: Asset) {
+        self.init(id: asset.id, title: asset.name, color: asset.color, value: "...")
+    }
+}
+
+extension FavouriteAssetCellView.Data {
 
     /// A convenience initializer for FavouriteAssetCellData.
     ///

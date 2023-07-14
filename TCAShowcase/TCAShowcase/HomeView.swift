@@ -3,9 +3,11 @@
 //  TCA Showcase
 //
 
+import ComposableArchitecture
 import SwiftUI
 
-struct HomeView<Router: SwiftUINavigationRouter>: View {
+struct HomeView<Router: SwiftUINavigationRouter, MainStore: Store<AssetsListDomain.State, AssetsListDomain.Action>>: View {
+    let store: MainStore
     @ObservedObject var router: Router
 
     var body: some View {
@@ -18,7 +20,7 @@ struct HomeView<Router: SwiftUINavigationRouter>: View {
                     router.set(navigationStack: stack)
                 })
         ) {
-            AssetsListView()
+            AssetsListView(store: store)
                 .navigationDestination(for: NavigationRoute.self) { route in
                     //  Handling app screens, pushed to the navigation stack:
                     switch route {
@@ -26,6 +28,8 @@ struct HomeView<Router: SwiftUINavigationRouter>: View {
                         makeEditAssetView(id: id)
                     case let .assetDetails(id):
                         makeAssetDetailsView(id: id)
+                    case .addAsset:
+                        makeAddAssetView()
                     }
                 }
                 .sheet(item: $router.presentedPopup) { _ in
@@ -56,7 +60,12 @@ struct HomeView<Router: SwiftUINavigationRouter>: View {
 private extension HomeView {
 
     func makeAddAssetView() -> some View {
-        EmptyView()
+        let store = Store(
+            initialState: AddAssetDomain.State(),
+            reducer: AddAssetDomain.reducer,
+            environment: AddAssetDomain.Environment(router: router)
+        )
+        return AddAssetView(store: store)
     }
 
     func makeEditAssetView(id: String) -> some View {
@@ -72,11 +81,18 @@ private extension HomeView {
     }
 }
 
-// struct SwiftUIRouterHomeView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        HomeView(
-//            viewModel: PreviewSwiftUIRouterHomeViewModel(),
-//            router: PreviewSwiftUINavigationRouter()
-//        )
-//    }
-// }
+struct SwiftUIRouterHomeView_Previews: PreviewProvider {
+    static var previews: some View {
+        //  let state = AssetsListViewState.noFavouriteAssets
+        //  let state = AssetsListViewState.loading([.init(id: "EUR", title: "Euro", value: nil), .init(id: "BTC", title: "Bitcoin", value: nil)])
+        let state = AssetsListViewState.loaded([.init(id: "EUR", title: "Euro", color: .primary, value: "1.2"), .init(id: "BTC", title: "Bitcoin", color: .primary, value: "28872")], "2023-05-10 12:30:12")
+
+        let router = PreviewSwiftUINavigationRouter()
+        let store = Store(
+            initialState: AssetsListDomain.State(viewState: state),
+            reducer: AssetsListDomain.reducer,
+            environment: AssetsListDomain.Environment(router: router)
+        )
+        HomeView(store: store, router: router)
+    }
+}
