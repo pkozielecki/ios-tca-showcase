@@ -28,6 +28,16 @@ enum AssetsListDomain {
     }
 
     static let reducer = AnyReducer<State, Action, Environment>.combine(
+        AddAssetDomain.reducer
+            .pullback(
+                state: \.addAssetState,
+                action: /Action.addAssetsToFavourites,
+                environment: { env in
+                    AddAssetDomain.Environment(
+                        router: env.router
+                    )
+                }
+            ),
         .init { state, action, environment in
             switch action {
             case .loadAssetsPerformanceRequested:
