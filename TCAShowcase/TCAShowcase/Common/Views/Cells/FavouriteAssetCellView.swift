@@ -85,13 +85,15 @@ extension FavouriteAssetCellView.Data {
     }
 }
 
-struct FavouriteAssetCellView_Previews: PreviewProvider {
-    static var previews: some View {
-        FavouriteAssetCellView(
-            data: .init(id: "AU", title: "Gold", color: .primary, value: "3.4"),
-            onSelectTapped: nil,
-            onEditTapped: nil,
-            onDeleteTapped: nil
-        )
+#if DEBUG
+    struct FavouriteAssetCellView_Previews: PreviewProvider {
+        static var previews: some View {
+            FavouriteAssetCellView(
+                data: .init(id: "AU", title: "Gold", color: .primary, value: "3.4"),
+                onSelectTapped: nil,
+                onEditTapped: nil,
+                onDeleteTapped: nil
+            )
+        }
     }
-}
+#endif

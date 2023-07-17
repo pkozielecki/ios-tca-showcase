@@ -10,21 +10,19 @@ import Foundation
 enum AssetsListDomain {
 
     struct State: Equatable {
-        var favouriteAssets: [Asset] = []
-        var viewState: AssetsListViewState = .noFavouriteAssets
+        var viewState: AssetsListViewState = .noAssets
         var addAssetState: AddAssetDomain.State = .init()
     }
 
     enum Action: Equatable {
         case loadAssetsPerformanceRequested
-        case selectAsset(id: String)
+        case assetTapped(id: String)
         case addAssetsToFavourites(AddAssetDomain.Action)
-        case addAssetTapped
+        case addAssetsToFavouritesTapped
     }
 
     struct Environment {
-        // TODO: Add Fav assets provider
-        var router: any SwiftUINavigationRouter
+        var showPopup: (_ route: PopupRoute) -> Void
     }
 
     static let reducer = AnyReducer<State, Action, Environment>.combine(
@@ -32,31 +30,33 @@ enum AssetsListDomain {
             .pullback(
                 state: \.addAssetState,
                 action: /Action.addAssetsToFavourites,
-                environment: { env in
-                    AddAssetDomain.Environment(
-                        router: env.router
-                    )
+                environment: { _ in
+                    AddAssetDomain.Environment.default
                 }
             ),
-        .init { state, action, environment in
+        .init { _, action, environment in
             switch action {
+
             case .loadAssetsPerformanceRequested:
-                // TODO: Load assets from provider
-                state.favouriteAssets = []
+                // TODO: Get favourite assets.
+                // TODO: Update view state depending of fav assets.
+                // TODO: Launch task to get performance for favourite assets.
                 return .none
-            case let .selectAsset(id):
+
+            case let .assetTapped(id):
                 print("Select asset \(id)")
                 return .none
-            case .addAssetTapped:
-                environment.router.push(route: .addAsset)
+
+            case .addAssetsToFavouritesTapped:
+                environment.showPopup(.addAsset)
                 return .none
+
             case let .addAssetsToFavourites(.confirmAssetSelection(ids)):
                 print("Add assets \(ids)")
                 // TODO: Add assets to favourites, update state
                 return .none
-            case .addAssetsToFavourites(.loadInitialAssets),
-                 .addAssetsToFavourites(.selectAsset),
-                 .addAssetsToFavourites(.goBack):
+
+            default:
                 return .none
             }
         }
@@ -64,7 +64,7 @@ enum AssetsListDomain {
 }
 
 enum AssetsListViewState: Equatable {
-    case noFavouriteAssets
+    case noAssets
     case loading([FavouriteAssetCellView.Data])
     case loaded([FavouriteAssetCellView.Data], String)
 }

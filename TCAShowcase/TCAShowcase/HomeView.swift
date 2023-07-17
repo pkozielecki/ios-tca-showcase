@@ -80,18 +80,21 @@ private extension HomeView {
     }
 }
 
-struct SwiftUIRouterHomeView_Previews: PreviewProvider {
-    static var previews: some View {
-        //  let state = AssetsListViewState.noFavouriteAssets
-        //  let state = AssetsListViewState.loading([.init(id: "EUR", title: "Euro", value: nil), .init(id: "BTC", title: "Bitcoin", value: nil)])
-        let state = AssetsListViewState.loaded([.init(id: "EUR", title: "Euro", color: .primary, value: "1.2"), .init(id: "BTC", title: "Bitcoin", color: .primary, value: "28872")], "2023-05-10 12:30:12")
+#if DEBUG
+    struct SwiftUIRouterHomeView_Previews: PreviewProvider {
+        static var previews: some View {
+            //  let state = AssetsListViewState.noFavouriteAssets
+            //  let state = AssetsListViewState.loading([.init(id: "EUR", title: "Euro", value: nil), .init(id: "BTC", title: "Bitcoin", value: nil)])
+            let state = AssetsListViewState.loaded([.init(id: "EUR", title: "Euro", color: .primary, value: "1.2"), .init(id: "BTC", title: "Bitcoin", color: .primary, value: "28872")], "2023-05-10 12:30:12")
 
-        let router = PreviewSwiftUINavigationRouter()
-        let store = Store(
-            initialState: AssetsListDomain.State(viewState: state),
-            reducer: AssetsListDomain.reducer,
-            environment: AssetsListDomain.Environment(router: router)
-        )
-        HomeView(store: store, router: router)
+            let store = Store(
+                initialState: AssetsListDomain.State(viewState: state),
+                reducer: AssetsListDomain.reducer,
+                environment: AssetsListDomain.Environment(
+                    showPopup: { print("Show route: \($0)") }
+                )
+            )
+            HomeView(store: store, router: PreviewSwiftUINavigationRouter())
+        }
     }
-}
+#endif

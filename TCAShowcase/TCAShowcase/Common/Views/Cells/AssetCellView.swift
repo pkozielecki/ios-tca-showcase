@@ -45,16 +45,18 @@ extension AssetCellView {
     }
 }
 
-struct AssetCellView_Previews: PreviewProvider {
-    static var previews: some View {
-        AssetCellView(
-            data: .init(id: "AU", title: "Gold", isSelected: false),
-            onSelectTapped: nil
-        ).frame(width: .infinity, height: 50)
-        AssetCellView(
-            data: .init(id: "AU", title: "Gold", isSelected: true),
-            onSelectTapped: nil
-        )
-        .frame(width: .infinity, height: 50)
+#if DEBUG
+    struct AssetCellView_Previews: PreviewProvider {
+        static var previews: some View {
+            AssetCellView(
+                data: .init(id: "AU", title: "Gold", isSelected: false),
+                onSelectTapped: nil
+            ).frame(width: .infinity, height: 50)
+            AssetCellView(
+                data: .init(id: "AU", title: "Gold", isSelected: true),
+                onSelectTapped: nil
+            )
+            .frame(width: .infinity, height: 50)
+        }
     }
-}
+#endif

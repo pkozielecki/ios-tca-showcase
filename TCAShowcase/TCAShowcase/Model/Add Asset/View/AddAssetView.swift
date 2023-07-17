@@ -40,7 +40,7 @@ struct AddAssetView: View {
                                     Text("Couldn't find any assets matching the search criteria")
                                     Spacer()
                                     PrimaryButton(label: "Back to my assets") {
-                                        store.send(.goBack)
+                                        store.send(.cancel)
                                     }
                                 }
                                 .padding(20)
@@ -61,11 +61,14 @@ struct AddAssetView: View {
                     Text("No assets to show")
                     Spacer()
                     PrimaryButton(label: "Back to my assets") {
-                        store.send(.goBack)
+                        store.send(.cancel)
                     }
                 }
                 .padding(20)
             }
+        }
+        .onAppear {
+            viewStore.send(.fetchAssets)
         }
     }
 }
@@ -106,24 +109,27 @@ private extension AddAssetView {
     }
 }
 
-struct AddAssetView_Previews: PreviewProvider {
-    static var previews: some View {
-        //  let viewState = AddAssetViewState.loading
-        //  let viewState = AddAssetViewState.noAssets
-        let viewState = AddAssetViewState.loaded([
-            AssetCellView.Data(id: "Au", title: "Gold", isSelected: false),
-            AssetCellView.Data(id: "Ag", title: "Silver", isSelected: true)
-        ])
+#if DEBUG
+    struct AddAssetView_Previews: PreviewProvider {
+        static var previews: some View {
+            //  let viewState = AddAssetViewState.loading
+            //  let viewState = AddAssetViewState.noAssets
+            let viewState = AddAssetViewState.loaded([
+                AssetCellView.Data(id: "Au", title: "Gold", isSelected: false),
+                AssetCellView.Data(id: "Ag", title: "Silver", isSelected: true)
+            ])
 
-        var state = AddAssetDomain.State()
-        state.viewState = viewState
-        let store = Store(
-            initialState: state,
-            reducer: AddAssetDomain.reducer,
-            environment: AddAssetDomain.Environment(
-                router: PreviewSwiftUINavigationRouter()
+            var state = AddAssetDomain.State()
+            state.viewState = viewState
+            let store = Store(
+                initialState: state,
+                reducer: AddAssetDomain.reducer,
+                environment: AddAssetDomain.Environment(
+                    fetchAssets: { [] },
+                    goBack: { print("Go back requested") }
+                )
             )
-        )
-        return AddAssetView(store: store)
+            return AddAssetView(store: store)
+        }
     }
-}
+#endif

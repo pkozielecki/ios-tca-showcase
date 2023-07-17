@@ -44,11 +44,13 @@ struct LoaderView: View {
     }
 }
 
-struct LoaderView_Previews: PreviewProvider {
-    static var previews: some View {
-        LoaderView(configuration: .default)
+#if DEBUG
+    struct LoaderView_Previews: PreviewProvider {
+        static var previews: some View {
+            LoaderView(configuration: .default)
+        }
     }
-}
+#endif
 
 extension LoaderView.Configuration {
 

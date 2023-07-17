@@ -32,7 +32,7 @@ struct AssetsListView: View {
                     PrimaryButton(
                         label: "Select favourite assets",
                         onTapCallback: {
-                            store.send(.addAssetTapped)
+                            store.send(.addAssetsToFavouritesTapped)
                         }
                     )
                 }
@@ -61,7 +61,7 @@ struct AssetsListView: View {
                         ForEach(assets) { data in
                             FavouriteAssetCellView(
                                 data: data,
-                                onSelectTapped: { viewStore.send(.selectAsset(id: $0)) },
+                                onSelectTapped: { viewStore.send(.assetTapped(id: $0)) },
                                 onEditTapped: { print("Edit tapped: \($0)") },
                                 onDeleteTapped: { print("Delete tapped: \($0)") }
                             )
@@ -84,7 +84,7 @@ struct AssetsListView: View {
 private extension AssetsListView {
 
     var hasNoAssets: Bool {
-        if case .noFavouriteAssets = viewStore.viewState {
+        if case .noAssets = viewStore.viewState {
             return true
         }
         return false
@@ -109,15 +109,17 @@ private extension AssetsListView {
     }
 }
 
-struct AssetsListView_Previews: PreviewProvider {
-    static var previews: some View {
-        let store = Store(
-            initialState: AssetsListDomain.State(),
-            reducer: AssetsListDomain.reducer,
-            environment: AssetsListDomain.Environment(
-                router: PreviewSwiftUINavigationRouter()
+#if DEBUG
+    struct AssetsListView_Previews: PreviewProvider {
+        static var previews: some View {
+            let store = Store(
+                initialState: AssetsListDomain.State(),
+                reducer: AssetsListDomain.reducer,
+                environment: AssetsListDomain.Environment(
+                    showPopup: { print("Popup requested: \($0)") }
+                )
             )
-        )
-        AssetsListView(store: store)
+            AssetsListView(store: store)
+        }
     }
-}
+#endif
