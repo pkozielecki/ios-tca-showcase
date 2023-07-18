@@ -40,7 +40,9 @@ import SwiftUI
             AssetsListDomain.Environment(
                 showPopup: { print("Popup requested: \($0)") },
                 setFavouriteAssets: { print("Set favourite assets: \($0)") },
-                fetchFavouriteAssets: { [] }
+                fetchFavouriteAssets: { [] },
+                fetchAssetsPerformance: { [] },
+                formatLastUpdatedDate: { _ in "" }
             )
         }
     }

@@ -23,6 +23,12 @@ struct TCAShowcaseApp: App {
                 },
                 fetchFavouriteAssets: {
                     DependenciesProvider.shared.favouriteAssetsManager.retrieveFavouriteAssets()
+                },
+                fetchAssetsPerformance: {
+                    await DependenciesProvider.shared.assetsPerformanceProvider.getAssetRates()
+                },
+                formatLastUpdatedDate: { date in
+                    DateFormatter.fullDateFormatter.string(from: date ?? Date())
                 }
             )
         )
@@ -33,12 +39,20 @@ struct TCAShowcaseApp: App {
 }
 
 // TODO: Replace with proper dependency injection
+
 final class DependenciesProvider {
     static let shared = DependenciesProvider()
+    private lazy var networkingModule = NetworkingFactory.makeNetworkingModule()
+    private lazy var baseAssetManager = DefaultBaseAssetManager()
 
-    private(set) lazy var assetsProvider = DefaultAssetsProvider(networkModule: NetworkingFactory.makeNetworkingModule())
-    private(set) lazy var favouriteAssetsManager = DefaultFavouriteAssetsManager()
     private(set) lazy var router = DefaultSwiftUINavigationRouter()
+    private(set) lazy var assetsProvider = DefaultAssetsProvider(networkModule: networkingModule)
+    private(set) lazy var favouriteAssetsManager = DefaultFavouriteAssetsManager()
+    private(set) lazy var assetsPerformanceProvider = DefaultAssetsRatesProvider(
+        favouriteAssetsProvider: favouriteAssetsManager,
+        networkModule: networkingModule,
+        baseAssetProvider: baseAssetManager
+    )
 
     private init() {}
 }
