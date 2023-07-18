@@ -47,10 +47,9 @@
 		222E23D72A5D29AF0082C1DC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 222E23D62A5D29AF0082C1DC /* Assets.xcassets */; };
 		222E23DA2A5D29AF0082C1DC /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 222E23D92A5D29AF0082C1DC /* Preview Assets.xcassets */; };
 		222E23E42A5D29AF0082C1DC /* TCAShowcaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 222E23E32A5D29AF0082C1DC /* TCAShowcaseTests.swift */; };
-		222E24022A5D4E100082C1DC /* ConcurrentNgNetworkModule in Frameworks */ = {isa = PBXBuildFile; productRef = 222E24012A5D4E100082C1DC /* ConcurrentNgNetworkModule */; };
-		222E24042A5D4E100082C1DC /* NgNetworkModuleCore in Frameworks */ = {isa = PBXBuildFile; productRef = 222E24032A5D4E100082C1DC /* NgNetworkModuleCore */; };
-		222E24062A5D4E100082C1DC /* ReactiveNgNetworkModule in Frameworks */ = {isa = PBXBuildFile; productRef = 222E24052A5D4E100082C1DC /* ReactiveNgNetworkModule */; };
 		222E24092A5D4E8D0082C1DC /* ComposableArchitecture in Frameworks */ = {isa = PBXBuildFile; productRef = 222E24082A5D4E8D0082C1DC /* ComposableArchitecture */; };
+		22F94B6D2A6A57640088BCF1 /* ConcurrentNgNetworkModule in Frameworks */ = {isa = PBXBuildFile; productRef = 22F94B6C2A6A57640088BCF1 /* ConcurrentNgNetworkModule */; };
+		22F94B6F2A6A57640088BCF1 /* NgNetworkModuleCore in Frameworks */ = {isa = PBXBuildFile; productRef = 22F94B6E2A6A57640088BCF1 /* NgNetworkModuleCore */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -106,7 +105,7 @@
 		222E23D92A5D29AF0082C1DC /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		222E23DF2A5D29AF0082C1DC /* TCAShowcaseTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TCAShowcaseTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		222E23E32A5D29AF0082C1DC /* TCAShowcaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TCAShowcaseTests.swift; sourceTree = "<group>"; };
-		222E240A2A5D4ED80082C1DC /* TCAShowcaseTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = TCAShowcaseTests.xctestplan; sourceTree = "<group>"; };
+		222E240A2A5D4ED80082C1DC /* TCAShowcaseTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = TCAShowcaseTests.xctestplan; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -114,10 +113,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				222E24022A5D4E100082C1DC /* ConcurrentNgNetworkModule in Frameworks */,
-				222E24042A5D4E100082C1DC /* NgNetworkModuleCore in Frameworks */,
 				222E24092A5D4E8D0082C1DC /* ComposableArchitecture in Frameworks */,
-				222E24062A5D4E100082C1DC /* ReactiveNgNetworkModule in Frameworks */,
+				22F94B6F2A6A57640088BCF1 /* NgNetworkModuleCore in Frameworks */,
+				22F94B6D2A6A57640088BCF1 /* ConcurrentNgNetworkModule in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -358,7 +356,6 @@
 		222E23C62A5D29AD0082C1DC = {
 			isa = PBXGroup;
 			children = (
-				222E240A2A5D4ED80082C1DC /* TCAShowcaseTests.xctestplan */,
 				222E23D12A5D29AD0082C1DC /* TCAShowcase */,
 				222E23E22A5D29AF0082C1DC /* TCAShowcaseTests */,
 				222E23D02A5D29AD0082C1DC /* Products */,
@@ -399,6 +396,7 @@
 		222E23E22A5D29AF0082C1DC /* TCAShowcaseTests */ = {
 			isa = PBXGroup;
 			children = (
+				222E240A2A5D4ED80082C1DC /* TCAShowcaseTests.xctestplan */,
 				222E23E32A5D29AF0082C1DC /* TCAShowcaseTests.swift */,
 			);
 			path = TCAShowcaseTests;
@@ -422,10 +420,9 @@
 			);
 			name = TCAShowcase;
 			packageProductDependencies = (
-				222E24012A5D4E100082C1DC /* ConcurrentNgNetworkModule */,
-				222E24032A5D4E100082C1DC /* NgNetworkModuleCore */,
-				222E24052A5D4E100082C1DC /* ReactiveNgNetworkModule */,
 				222E24082A5D4E8D0082C1DC /* ComposableArchitecture */,
+				22F94B6C2A6A57640088BCF1 /* ConcurrentNgNetworkModule */,
+				22F94B6E2A6A57640088BCF1 /* NgNetworkModuleCore */,
 			);
 			productName = TCAShowcase;
 			productReference = 222E23CF2A5D29AD0082C1DC /* TCAShowcase.app */;
@@ -478,8 +475,8 @@
 			);
 			mainGroup = 222E23C62A5D29AD0082C1DC;
 			packageReferences = (
-				222E24002A5D4E100082C1DC /* XCRemoteSwiftPackageReference "ng-ios-network-module" */,
 				222E24072A5D4E8D0082C1DC /* XCRemoteSwiftPackageReference "swift-composable-architecture" */,
+				22F94B6B2A6A57640088BCF1 /* XCRemoteSwiftPackageReference "ng-ios-network-module" */,
 			);
 			productRefGroup = 222E23D02A5D29AD0082C1DC /* Products */;
 			projectDirPath = "";
@@ -723,8 +720,8 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -754,8 +751,8 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -849,14 +846,6 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		222E24002A5D4E100082C1DC /* XCRemoteSwiftPackageReference "ng-ios-network-module" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/netguru/ng-ios-network-module";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.0;
-			};
-		};
 		222E24072A5D4E8D0082C1DC /* XCRemoteSwiftPackageReference "swift-composable-architecture" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/pointfreeco/swift-composable-architecture";
@@ -865,28 +854,31 @@
 				minimumVersion = 0.55.0;
 			};
 		};
+		22F94B6B2A6A57640088BCF1 /* XCRemoteSwiftPackageReference "ng-ios-network-module" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/netguru/ng-ios-network-module";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		222E24012A5D4E100082C1DC /* ConcurrentNgNetworkModule */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 222E24002A5D4E100082C1DC /* XCRemoteSwiftPackageReference "ng-ios-network-module" */;
-			productName = ConcurrentNgNetworkModule;
-		};
-		222E24032A5D4E100082C1DC /* NgNetworkModuleCore */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 222E24002A5D4E100082C1DC /* XCRemoteSwiftPackageReference "ng-ios-network-module" */;
-			productName = NgNetworkModuleCore;
-		};
-		222E24052A5D4E100082C1DC /* ReactiveNgNetworkModule */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 222E24002A5D4E100082C1DC /* XCRemoteSwiftPackageReference "ng-ios-network-module" */;
-			productName = ReactiveNgNetworkModule;
-		};
 		222E24082A5D4E8D0082C1DC /* ComposableArchitecture */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 222E24072A5D4E8D0082C1DC /* XCRemoteSwiftPackageReference "swift-composable-architecture" */;
 			productName = ComposableArchitecture;
+		};
+		22F94B6C2A6A57640088BCF1 /* ConcurrentNgNetworkModule */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 22F94B6B2A6A57640088BCF1 /* XCRemoteSwiftPackageReference "ng-ios-network-module" */;
+			productName = ConcurrentNgNetworkModule;
+		};
+		22F94B6E2A6A57640088BCF1 /* NgNetworkModuleCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 22F94B6B2A6A57640088BCF1 /* XCRemoteSwiftPackageReference "ng-ios-network-module" */;
+			productName = NgNetworkModuleCore;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
