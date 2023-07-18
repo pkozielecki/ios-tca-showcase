@@ -39,6 +39,7 @@ import SwiftUI
         static var previewEnvironment: AssetsListDomain.Environment {
             AssetsListDomain.Environment(
                 showPopup: { print("Popup requested: \($0)") },
+                showAlert: { print("Alert requested: \($0)") },
                 setFavouriteAssets: { print("Set favourite assets: \($0)") },
                 fetchFavouriteAssets: { [] },
                 fetchAssetsPerformance: { [] },

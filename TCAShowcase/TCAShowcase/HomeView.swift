@@ -49,7 +49,7 @@ struct HomeView<Router: SwiftUINavigationRouter, MainStore: Store<AssetsListDoma
                         //  Handling app alert confirmation action:
                         switch alertRoute {
                         case let .deleteAsset(assetId, _):
-                            print("Asset \(assetId) deleted")
+                            store.send(.deleteAssetConfirmed(id: assetId))
                         }
                     }
                 )

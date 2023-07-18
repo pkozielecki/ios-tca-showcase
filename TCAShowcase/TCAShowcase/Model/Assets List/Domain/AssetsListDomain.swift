@@ -21,10 +21,13 @@ enum AssetsListDomain {
         case assetTapped(id: String)
         case addAssetsToFavourites(AddAssetDomain.Action)
         case addAssetsToFavouritesTapped
+        case deleteAssetRequested(id: String)
+        case deleteAssetConfirmed(id: String)
     }
 
     struct Environment {
         var showPopup: (_ route: PopupRoute) -> Void
+        var showAlert: (_ route: AlertRoute) -> Void
         var setFavouriteAssets: (_ ids: [Asset]) async -> Void
         var fetchFavouriteAssets: () -> [Asset]
         var fetchAssetsPerformance: () async -> [AssetPerformance]
@@ -78,6 +81,21 @@ enum AssetsListDomain {
                         assets.first { $0.id == id }
                     }
                     await environment.setFavouriteAssets(selectedAssets)
+                    return .loadAssetsPerformanceRequested
+                }
+
+            case let .deleteAssetRequested(id):
+                let asset = state.favouriteAssets.first { $0.id == id }
+                let assetName = asset?.name ?? ""
+                return .fireAndForget {
+                    environment.showAlert(.deleteAsset(assetId: id, assetName: assetName))
+                }
+
+            case let .deleteAssetConfirmed(id):
+                state.favouriteAssets.removeAll { $0.id == id }
+                let assets = state.favouriteAssets
+                return EffectTask.task {
+                    await environment.setFavouriteAssets(assets)
                     return .loadAssetsPerformanceRequested
                 }
 

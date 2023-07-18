@@ -41,7 +41,7 @@ struct AssetsListView: View {
                 List {
                     Section(header:
                         HStack(alignment: .center) {
-                            Text("Your asssets")
+                            Text("Your assets")
                             Spacer()
                             Button {
                                 print("App info tapped")
@@ -63,7 +63,7 @@ struct AssetsListView: View {
                                 data: data,
                                 onSelectTapped: { viewStore.send(.assetTapped(id: $0)) },
                                 onEditTapped: { print("Edit tapped: \($0)") },
-                                onDeleteTapped: { print("Delete tapped: \($0)") }
+                                onDeleteTapped: { viewStore.send(.deleteAssetRequested(id: $0)) }
                             )
                             .noInsetsCell()
                         }

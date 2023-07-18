@@ -15,9 +15,8 @@ struct TCAShowcaseApp: App {
             initialState: AssetsListDomain.State(),
             reducer: AssetsListDomain.reducer,
             environment: AssetsListDomain.Environment(
-                showPopup: {
-                    router.presentedPopup = $0
-                },
+                showPopup: { router.presentedPopup = $0 },
+                showAlert: { router.presentedAlert = $0 },
                 setFavouriteAssets: { assets in
                     DependenciesProvider.shared.favouriteAssetsManager.store(favouriteAssets: assets)
                 },
