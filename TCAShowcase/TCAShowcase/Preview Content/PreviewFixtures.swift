@@ -34,4 +34,14 @@ import SwiftUI
         func show(alert: AlertRoute) {}
         func hideCurrentAlert() {}
     }
+
+    extension AssetsListDomain.Environment {
+        static var previewEnvironment: AssetsListDomain.Environment {
+            AssetsListDomain.Environment(
+                showPopup: { print("Popup requested: \($0)") },
+                setFavouriteAssets: { print("Set favourite assets: \($0)") },
+                fetchFavouriteAssets: { [] }
+            )
+        }
+    }
 #endif

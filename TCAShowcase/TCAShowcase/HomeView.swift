@@ -90,9 +90,7 @@ private extension HomeView {
             let store = Store(
                 initialState: AssetsListDomain.State(viewState: state),
                 reducer: AssetsListDomain.reducer,
-                environment: AssetsListDomain.Environment(
-                    showPopup: { print("Show route: \($0)") }
-                )
+                environment: AssetsListDomain.Environment.previewEnvironment
             )
             HomeView(store: store, router: PreviewSwiftUINavigationRouter())
         }

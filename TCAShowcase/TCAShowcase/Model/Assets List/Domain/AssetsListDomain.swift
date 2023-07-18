@@ -23,6 +23,8 @@ enum AssetsListDomain {
 
     struct Environment {
         var showPopup: (_ route: PopupRoute) -> Void
+        var setFavouriteAssets: (_ ids: [Asset]) async -> Void
+        var fetchFavouriteAssets: () -> [Asset]
     }
 
     static let reducer = AnyReducer<State, Action, Environment>.combine(
@@ -34,12 +36,12 @@ enum AssetsListDomain {
                     AddAssetDomain.Environment.default
                 }
             ),
-        .init { _, action, environment in
+        .init { state, action, environment in
             switch action {
 
             case .loadAssetsPerformanceRequested:
-                // TODO: Get favourite assets.
-                // TODO: Update view state depending of fav assets.
+                let favouriteAssets = environment.fetchFavouriteAssets()
+                state.viewState = .loading(favouriteAssets.map { FavouriteAssetCellView.Data(asset: $0) })
                 // TODO: Launch task to get performance for favourite assets.
                 return .none
 
@@ -51,10 +53,16 @@ enum AssetsListDomain {
                 environment.showPopup(.addAsset)
                 return .none
 
-            case let .addAssetsToFavourites(.confirmAssetSelection(ids)):
-                print("Add assets \(ids)")
-                // TODO: Add assets to favourites, update state
-                return .none
+            case .addAssetsToFavourites(.confirmAssetsSelection):
+                let selectedAssetsIDs = state.addAssetState.selectedAssetsIDs
+                let assets = state.addAssetState.assets
+                return EffectTask.task {
+                    let selectedAssets = selectedAssetsIDs.compactMap { id in
+                        assets.first { $0.id == id }
+                    }
+                    await environment.setFavouriteAssets(selectedAssets)
+                    return .loadAssetsPerformanceRequested
+                }
 
             default:
                 return .none

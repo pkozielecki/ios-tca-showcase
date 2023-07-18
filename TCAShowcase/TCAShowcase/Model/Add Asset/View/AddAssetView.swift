@@ -25,12 +25,14 @@ struct AddAssetView: View {
 
                         //  A search bar section:
                         // TODO: Add and setup Search Bar
+                        // TODO: Add asset filtering
+                        // TODO: Add asset sorting
 
                         //  An assets section:
                         Section("Assets:") {
                             ForEach(assetCellsData) { data in
-                                AssetCellView(data: data) { _ in
-                                    store.send(.selectAsset(id: data.id))
+                                AssetCellView(data: data) { id in
+                                    store.send(.selectAsset(id: id))
                                 }
                                 .noInsetsCell()
                             }
@@ -49,9 +51,9 @@ struct AddAssetView: View {
 
                         //  A footer with add assets button:
                         PrimaryButton(label: "Add selected \(formattedSelectedAssetsCount)asset(s) to ❤️") {
-                            store.send(.confirmAssetSelection(ids: viewStore.state.selectedAssetsIDs))
+                            store.send(.confirmAssetsSelection)
                         }
-                        .disabled(!viewStore.state.selectedAssetsIDs.isEmpty)
+                        .disabled(viewStore.state.selectedAssetsIDs.isEmpty)
                     }
                     .listStyle(.grouped)
                 }
@@ -126,7 +128,8 @@ private extension AddAssetView {
                 reducer: AddAssetDomain.reducer,
                 environment: AddAssetDomain.Environment(
                     fetchAssets: { [] },
-                    goBack: { print("Go back requested") }
+                    fetchFavouriteAssetsIDs: { [] },
+                    goBack: {}
                 )
             )
             return AddAssetView(store: store)

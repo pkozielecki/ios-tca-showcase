@@ -49,7 +49,7 @@ struct AssetsListView: View {
                                 Image(systemName: "info.circle.fill")
                             }
                             Button {
-                                print("Add new asset tapped")
+                                store.send(.addAssetsToFavouritesTapped)
                             } label: {
                                 Image(systemName: "plus.circle.fill")
                             }
@@ -115,9 +115,7 @@ private extension AssetsListView {
             let store = Store(
                 initialState: AssetsListDomain.State(),
                 reducer: AssetsListDomain.reducer,
-                environment: AssetsListDomain.Environment(
-                    showPopup: { print("Popup requested: \($0)") }
-                )
+                environment: AssetsListDomain.Environment.previewEnvironment
             )
             AssetsListView(store: store)
         }

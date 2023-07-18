@@ -9,20 +9,22 @@ import Foundation
 enum AddAssetDomain {
 
     struct State: Equatable {
+        var assets: [Asset] = []
         var selectedAssetsIDs: [String] = []
         var viewState: AddAssetViewState = .loading
     }
 
     enum Action: Equatable {
         case fetchAssets
-        case updateViewState(AddAssetViewState)
+        case assetsFetched([Asset])
         case selectAsset(id: String)
-        case confirmAssetSelection(ids: [String])
+        case confirmAssetsSelection
         case cancel
     }
 
     struct Environment {
         var fetchAssets: () async -> [Asset]
+        var fetchFavouriteAssetsIDs: () -> [String]
         var goBack: () -> Void
     }
 
@@ -31,43 +33,42 @@ enum AddAssetDomain {
 
         //  Downloads available assets to visualise them in the list (for user to choose from):
         case .fetchAssets:
+            state.selectedAssetsIDs = environment.fetchFavouriteAssetsIDs()
             state.viewState = .loading
-            let selectedAssetsIDs = state.selectedAssetsIDs
             return EffectTask.task {
-                let assets = await environment.fetchAssets()
-                guard !assets.isEmpty else {
-                    return .updateViewState(.noAssets)
-                }
-
-                let assetsCellData = assets.map {
-                    AssetCellView.Data(id: $0.id, title: $0.name, isSelected: selectedAssetsIDs.contains($0.id))
-                }
-                return .updateViewState(.loaded(assetsCellData))
+                .assetsFetched(await environment.fetchAssets())
             }
 
-        //  Updates the view state:
-        case let .updateViewState(newState):
-            state.viewState = newState
+        case let .assetsFetched(assets):
+            state.assets = assets
+            let assetsData = assets.toCellData(selectedAssetsIDs: state.selectedAssetsIDs)
+            state.viewState = assets.isEmpty ? .noAssets : .loaded(assetsData)
             return .none
 
         //  Selects / Deselects an asset:
         case let .selectAsset(id):
             if !state.selectedAssetsIDs.contains(id) {
                 state.selectedAssetsIDs.append(id)
+            } else {
+                state.selectedAssetsIDs.removeAll { $0 == id }
             }
+            state.viewState = .loaded(state.assets.toCellData(selectedAssetsIDs: state.selectedAssetsIDs))
             return .none
 
-        //  Selected assets are confirmed and added to the favourites list:
-        case .confirmAssetSelection:
-            print("Select asset")
-            return .none
-
-        //  Don't change anything and go back:
-        case .cancel:
-            state.selectedAssetsIDs = []
+        //  Selected assets are confirmed or user cancelled:
+        case .confirmAssetsSelection, .cancel:
             return .fireAndForget {
                 environment.goBack()
             }
+        }
+    }
+}
+
+extension Array where Element == Asset {
+
+    func toCellData(selectedAssetsIDs: [String]) -> [AssetCellView.Data] {
+        map {
+            AssetCellView.Data(id: $0.id, title: $0.name, isSelected: selectedAssetsIDs.contains($0.id))
         }
     }
 }
@@ -83,7 +84,8 @@ extension AddAssetDomain.Environment {
     static var `default`: AddAssetDomain.Environment {
         .init(
             fetchAssets: { await DependenciesProvider.shared.assetsProvider.fetchAssets() },
-            goBack: { DependenciesProvider.shared.router.pop() }
+            fetchFavouriteAssetsIDs: { DependenciesProvider.shared.favouriteAssetsManager.retrieveFavouriteAssets().map(\.id) },
+            goBack: { DependenciesProvider.shared.router.dismiss() }
         )
     }
 }

@@ -17,6 +17,12 @@ struct TCAShowcaseApp: App {
             environment: AssetsListDomain.Environment(
                 showPopup: {
                     router.presentedPopup = $0
+                },
+                setFavouriteAssets: { assets in
+                    DependenciesProvider.shared.favouriteAssetsManager.store(favouriteAssets: assets)
+                },
+                fetchFavouriteAssets: {
+                    DependenciesProvider.shared.favouriteAssetsManager.retrieveFavouriteAssets()
                 }
             )
         )
@@ -31,6 +37,7 @@ final class DependenciesProvider {
     static let shared = DependenciesProvider()
 
     private(set) lazy var assetsProvider = DefaultAssetsProvider(networkModule: NetworkingFactory.makeNetworkingModule())
+    private(set) lazy var favouriteAssetsManager = DefaultFavouriteAssetsManager()
     private(set) lazy var router = DefaultSwiftUINavigationRouter()
 
     private init() {}
