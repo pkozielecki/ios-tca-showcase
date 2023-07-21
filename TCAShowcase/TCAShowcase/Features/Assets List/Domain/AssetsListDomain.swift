@@ -13,14 +13,23 @@ enum AssetsListDomain {
         var favouriteAssets: [Asset] = []
         var viewState: AssetsListViewState = .noAssets
         var addAssetState: AddAssetDomain.State = .init()
+//        var appInfoState: AppInfoDomain.State = .init()
     }
 
     enum Action: Equatable {
+        /// Assets list:
         case loadAssetsPerformanceRequested
         case loadAssetsPerformanceLoaded([AssetPerformance])
+
+        /// Selecting an asset:
         case assetTapped(id: String)
-        case addAssetsToFavourites(AddAssetDomain.Action)
+
+        /// App info:
+        case appInfoTapped
+
+        /// Managing favourite assets:
         case addAssetsToFavouritesTapped
+        case addAssetsToFavourites(AddAssetDomain.Action)
         case deleteAssetRequested(id: String)
         case deleteAssetConfirmed(id: String)
     }
@@ -98,6 +107,10 @@ enum AssetsListDomain {
                     await environment.setFavouriteAssets(assets)
                     return .loadAssetsPerformanceRequested
                 }
+
+            case .appInfoTapped:
+                environment.showPopup(.appInfo)
+                return .none
 
             default:
                 return .none

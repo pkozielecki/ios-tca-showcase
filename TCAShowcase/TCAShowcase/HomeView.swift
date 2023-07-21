@@ -76,7 +76,22 @@ private extension HomeView {
     }
 
     func makeAppInfoView() -> some View {
-        EmptyView()
+        let dependenciesProvider = DependenciesProvider.shared
+        let store = Store(
+            initialState: AppInfoDomain.State(),
+            reducer: AppInfoDomain.reducer,
+            environment: AppInfoDomain.Environment(
+                fetchLatestAppVersion: { await dependenciesProvider.availableAppVersionProvider.fetchLatestAppStoreVersion() },
+                currentAppVersion: { dependenciesProvider.appVersionProvider.currentAppVersion },
+                openAppStore: {
+                    if dependenciesProvider.urlOpener.canOpenURL(AppConfiguration.appstoreURL) {
+                        dependenciesProvider.urlOpener.open(AppConfiguration.appstoreURL)
+                    }
+                },
+                goBack: { dependenciesProvider.router.presentedPopup = nil }
+            )
+        )
+        return AppInfoView(store: store)
     }
 }
 

@@ -52,6 +52,9 @@ final class DependenciesProvider {
         networkModule: networkingModule,
         baseAssetProvider: baseAssetManager
     )
+    private(set) lazy var appVersionProvider = DefaultAppVersionProvider()
+    private(set) lazy var availableAppVersionProvider = DefaultAvailableAppVersionProvider()
+    private(set) lazy var urlOpener: URLOpener = UIApplication.shared
 
     private init() {}
 }

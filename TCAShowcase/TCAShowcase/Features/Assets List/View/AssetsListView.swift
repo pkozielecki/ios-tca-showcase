@@ -44,7 +44,7 @@ struct AssetsListView: View {
                             Text("Your assets")
                             Spacer()
                             Button {
-                                print("App info tapped")
+                                store.send(.appInfoTapped)
                             } label: {
                                 Image(systemName: "info.circle.fill")
                             }

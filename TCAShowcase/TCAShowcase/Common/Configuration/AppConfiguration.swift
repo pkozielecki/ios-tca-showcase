@@ -9,6 +9,9 @@ import Foundation
 enum AppConfiguration {
 
     static let baseURL = URL(string: "https://api.metalpriceapi.com/")!
+
+    // TODO: Replace with real URL:
+    static let appstoreURL = URL(string: "https://apps.apple.com/us/app/tca-showcase/id1561619239")!
 }
 
 extension AppConfiguration {
