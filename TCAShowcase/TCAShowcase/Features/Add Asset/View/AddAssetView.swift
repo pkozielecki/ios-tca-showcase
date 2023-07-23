@@ -7,10 +7,10 @@ import ComposableArchitecture
 import SwiftUI
 
 struct AddAssetView: View {
-    let store: Store<AddAssetDomain.State, AddAssetDomain.Action>
-    @ObservedObject var viewStore: ViewStore<AddAssetDomain.State, AddAssetDomain.Action>
+    let store: StoreOf<AddAssetDomain.Feature>
+    @ObservedObject var viewStore: ViewStoreOf<AddAssetDomain.Feature>
 
-    init(store: Store<AddAssetDomain.State, AddAssetDomain.Action>) {
+    init(store: StoreOf<AddAssetDomain.Feature>) {
         self.store = store
         viewStore = ViewStore(store)
     }
@@ -121,12 +121,11 @@ private extension AddAssetView {
                 AssetCellView.Data(id: "Ag", title: "Silver", isSelected: true)
             ])
 
-            var state = AddAssetDomain.State()
+            var state = AddAssetDomain.Feature.State()
             state.viewState = viewState
             let store = Store(
                 initialState: state,
-                reducer: AddAssetDomain.reducer,
-                environment: AddAssetDomain.Environment(
+                reducer: AddAssetDomain.Feature(
                     fetchAssets: { [] },
                     fetchFavouriteAssetsIDs: { [] },
                     goBack: {}
