@@ -38,11 +38,11 @@
 		1E5F6E01972FCB7C53E23567 /* AssetsListDomain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E5F65E01774BFA5BE81749A /* AssetsListDomain.swift */; };
 		1E5F6E0770A409AB2595350D /* CellStyles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E5F6299D026CA27697C229F /* CellStyles.swift */; };
 		1E5F6E0D4AB2B0EDDDE4D61D /* LocalStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E5F6726873C7C9A37010CA8 /* LocalStorage.swift */; };
-		1E5F6E7DBAE79B99ECD38A7D /* AddAssetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E5F6E676B48ABB2D1656F94 /* AddAssetView.swift */; };
+		1E5F6E7DBAE79B99ECD38A7D /* FavouriteAssetsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E5F6E676B48ABB2D1656F94 /* FavouriteAssetsView.swift */; };
 		1E5F6EDA420B737CF5A10B53 /* NetworkingFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E5F6AE1DB6C8AEC4A25F3EA /* NetworkingFactory.swift */; };
 		1E5F6F101D2D1E2561650313 /* DateFormatterExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E5F64C8E73ABFBC2552E928 /* DateFormatterExtensions.swift */; };
 		1E5F6F163009ADFB11A90264 /* AssetsRatesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E5F6026968A12018C7F6795 /* AssetsRatesProvider.swift */; };
-		1E5F6F2F4020212130451BC2 /* AddAssetDomain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E5F62DA2EEF579F56E24C8C /* AddAssetDomain.swift */; };
+		1E5F6F2F4020212130451BC2 /* FavouriteAssetsDomain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E5F62DA2EEF579F56E24C8C /* FavouriteAssetsDomain.swift */; };
 		1E5F6F79376651645E2B6DF4 /* AssetPrice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E5F65C4C40C9E17E2D61807 /* AssetPrice.swift */; };
 		1E5F6F7F3909DE1098C45C0A /* GetAllAssetsResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E5F632D075858490C5B3573 /* GetAllAssetsResponse.swift */; };
 		1E5F6F8431857FF95C5FA412 /* SwiftUINavigationRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E5F630FE336029368ABB280 /* SwiftUINavigationRouter.swift */; };
@@ -78,7 +78,7 @@
 		1E5F62702E47F0D84C17BCEB /* AddApiKeyNetworkModuleAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddApiKeyNetworkModuleAction.swift; sourceTree = "<group>"; };
 		1E5F6281CE8D9E04211E28DA /* AppInfoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppInfoView.swift; sourceTree = "<group>"; };
 		1E5F6299D026CA27697C229F /* CellStyles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CellStyles.swift; sourceTree = "<group>"; };
-		1E5F62DA2EEF579F56E24C8C /* AddAssetDomain.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddAssetDomain.swift; sourceTree = "<group>"; };
+		1E5F62DA2EEF579F56E24C8C /* FavouriteAssetsDomain.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FavouriteAssetsDomain.swift; sourceTree = "<group>"; };
 		1E5F630FE336029368ABB280 /* SwiftUINavigationRouter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftUINavigationRouter.swift; sourceTree = "<group>"; };
 		1E5F632D075858490C5B3573 /* GetAllAssetsResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GetAllAssetsResponse.swift; sourceTree = "<group>"; };
 		1E5F6348C5BCD4CFAE3A310D /* AppInfoDomain.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppInfoDomain.swift; sourceTree = "<group>"; };
@@ -102,7 +102,7 @@
 		1E5F6D9B665C10162D8A90C4 /* FoundationExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FoundationExtensions.swift; sourceTree = "<group>"; };
 		1E5F6DA192B5D840E1B40947 /* BaseAssetProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseAssetProvider.swift; sourceTree = "<group>"; };
 		1E5F6DE2B0550F8964CB2177 /* PreviewFixtures.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreviewFixtures.swift; sourceTree = "<group>"; };
-		1E5F6E676B48ABB2D1656F94 /* AddAssetView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddAssetView.swift; sourceTree = "<group>"; };
+		1E5F6E676B48ABB2D1656F94 /* FavouriteAssetsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FavouriteAssetsView.swift; sourceTree = "<group>"; };
 		1E5F6E799470E0BFB79D76C6 /* ButtonStyles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ButtonStyles.swift; sourceTree = "<group>"; };
 		1E5F6EB2327E8FF3622B048C /* GetAssetsRatesResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GetAssetsRatesResponse.swift; sourceTree = "<group>"; };
 		1E5F6F79DC8362D7A3CD2DCB /* GetAllAssetsRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GetAllAssetsRequest.swift; sourceTree = "<group>"; };
@@ -139,21 +139,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		1E5F60941FD218B37C5E7946 /* Add Asset */ = {
+		1E5F60941FD218B37C5E7946 /* Favourite Assets */ = {
 			isa = PBXGroup;
 			children = (
 				1E5F6E1CA855739BC11929BC /* Domain */,
 				1E5F6E31C3E8862FF1DAF423 /* View */,
 			);
-			path = "Add Asset";
+			path = "Favourite Assets";
 			sourceTree = "<group>";
 		};
 		1E5F60D00772F0AAF96C9882 /* Asset */ = {
 			isa = PBXGroup;
 			children = (
 				1E5F605212B339F931AF5B11 /* Asset.swift */,
-				1E5F68F93F0DD02B72E58D33 /* Domain */,
-				1E5F6F5A3AECF01A776FCED8 /* View */,
 			);
 			path = Asset;
 			sourceTree = "<group>";
@@ -257,13 +255,6 @@
 			path = "App Info";
 			sourceTree = "<group>";
 		};
-		1E5F68F93F0DD02B72E58D33 /* Domain */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Domain;
-			sourceTree = "<group>";
-		};
 		1E5F69FD3E0DF1CCB2650BFC /* Assets List */ = {
 			isa = PBXGroup;
 			children = (
@@ -344,7 +335,7 @@
 		1E5F6E1CA855739BC11929BC /* Domain */ = {
 			isa = PBXGroup;
 			children = (
-				1E5F62DA2EEF579F56E24C8C /* AddAssetDomain.swift */,
+				1E5F62DA2EEF579F56E24C8C /* FavouriteAssetsDomain.swift */,
 			);
 			path = Domain;
 			sourceTree = "<group>";
@@ -352,7 +343,7 @@
 		1E5F6E31C3E8862FF1DAF423 /* View */ = {
 			isa = PBXGroup;
 			children = (
-				1E5F6E676B48ABB2D1656F94 /* AddAssetView.swift */,
+				1E5F6E676B48ABB2D1656F94 /* FavouriteAssetsView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -362,7 +353,7 @@
 			children = (
 				1E5F69FD3E0DF1CCB2650BFC /* Assets List */,
 				1E5F60D00772F0AAF96C9882 /* Asset */,
-				1E5F60941FD218B37C5E7946 /* Add Asset */,
+				1E5F60941FD218B37C5E7946 /* Favourite Assets */,
 				1E5F65C813D9CA00C1735368 /* App Info */,
 			);
 			path = Features;
@@ -382,13 +373,6 @@
 				1E5F62702E47F0D84C17BCEB /* AddApiKeyNetworkModuleAction.swift */,
 			);
 			path = Action;
-			sourceTree = "<group>";
-		};
-		1E5F6F5A3AECF01A776FCED8 /* View */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = View;
 			sourceTree = "<group>";
 		};
 		1E5F6FFF21DADCE2D5FB2303 /* Request */ = {
@@ -595,9 +579,9 @@
 				1E5F6E01972FCB7C53E23567 /* AssetsListDomain.swift in Sources */,
 				1E5F60F90A12706D6651C125 /* AssetsListView.swift in Sources */,
 				1E5F6FB03A8F3C42B043D040 /* Asset.swift in Sources */,
-				1E5F6F2F4020212130451BC2 /* AddAssetDomain.swift in Sources */,
+				1E5F6F2F4020212130451BC2 /* FavouriteAssetsDomain.swift in Sources */,
 				1E5F6966201C35259D1B28BE /* AssetCellView.swift in Sources */,
-				1E5F6E7DBAE79B99ECD38A7D /* AddAssetView.swift in Sources */,
+				1E5F6E7DBAE79B99ECD38A7D /* FavouriteAssetsView.swift in Sources */,
 				1E5F63B75DC1A75011091680 /* LoaderView.swift in Sources */,
 				1E5F6262F4F4015BFB37A43A /* FavouriteAssetsProvider.swift in Sources */,
 				1E5F6E0D4AB2B0EDDDE4D61D /* LocalStorage.swift in Sources */,

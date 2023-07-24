@@ -1,12 +1,12 @@
 //
-//  AddAssetDomain.swift
+//  FavouriteAssetsDomain.swift
 //  TCA Showcase
 //
 
 import ComposableArchitecture
 import Foundation
 
-enum AddAssetDomain {
+enum FavouriteAssetsDomain {
     struct Feature: ReducerProtocol {
         struct State: Equatable {
             var assets: [Asset] = []
@@ -22,19 +22,7 @@ enum AddAssetDomain {
             case cancel
         }
 
-        /// Which introduction `ReducerProtocol` we got rid of environments
-        /// (paywall): https://www.pointfree.co/collections/composable-architecture/reducer-protocol/ep208-reducer-protocol-in-practice
-        /// There are many ways to implement these closures without `Environment`:
-        /// - as properties of `AddAssetDomain.Feature`
-        /// - as `@Dependency` so they will be wrapped in some struct-like `Client` (recommended)
-        /// - other ideas ;)
-        /// For now - lets go with properties of `AddAssetDomain.Feature` because since `ReducerProtocol` - reducer is a struct, not a function.
-//        struct Environment {
-//            var fetchAssets: () async -> [Asset]
-//            var fetchFavouriteAssetsIDs: () -> [String]
-//            var goBack: () -> Void
-//        }
-
+        // TODO: Try @Dependency approach: https://pointfreeco.github.io/swift-composable-architecture/0.41.0/documentation/composablearchitecture/dependencymanagement/
         var fetchAssets: () async -> [Asset]
         var fetchFavouriteAssetsIDs: () -> [String]
         var goBack: () -> Void
@@ -44,6 +32,7 @@ enum AddAssetDomain {
         /// It may be not stated clearly in this link but you may find this in TCA examples and `isowords` game
         /// If you need to combine reducers into higher-order reducer - then use `var body` property just like in SwiftUI
         func reduce(into state: inout State, action: Action) -> EffectOf<Feature> {
+
             switch action {
             //  Downloads available assets to visualise them in the list (for user to choose from):
             case .fetchAssets:
@@ -93,17 +82,3 @@ enum AddAssetViewState: Equatable {
     case loaded([AssetCellView.Data])
     case noAssets
 }
-
-/// This is no longer needed but these default implementations will be used into `AddAssetDomain.Feature.init()`
-/// Next PR will display a PointFree's recommended way of dealing with dependencies like these - but for now - change step by step
-/// Developers tends to change everything at once on one go and be perfect...
-// extension AddAssetDomain.Environment {
-//
-//    static var `default`: AddAssetDomain.Environment {
-//        .init(
-//            fetchAssets: { await DependenciesProvider.shared.assetsProvider.fetchAssets() },
-//            fetchFavouriteAssetsIDs: { DependenciesProvider.shared.favouriteAssetsManager.retrieveFavouriteAssets().map(\.id) },
-//            goBack: { DependenciesProvider.shared.router.dismiss() }
-//        )
-//    }
-// }

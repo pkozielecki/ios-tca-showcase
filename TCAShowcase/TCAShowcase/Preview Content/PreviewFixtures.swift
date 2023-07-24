@@ -4,6 +4,7 @@
 //
 
 import Combine
+import ComposableArchitecture
 import Foundation
 import SwiftUI
 
@@ -25,25 +26,44 @@ import SwiftUI
         func set(navigationStack: [NavigationRoute]) {}
 
         func present(popup: PopupRoute) {}
+
         func dismiss() {}
 
         func push(route: NavigationRoute) {}
+
         func pop() {}
+
         func popAll() {}
 
         func show(alert: AlertRoute) {}
+
         func hideCurrentAlert() {}
     }
 
-    extension AssetsListDomain.Environment {
-        static var previewEnvironment: AssetsListDomain.Environment {
-            AssetsListDomain.Environment(
-                showPopup: { print("Popup requested: \($0)") },
-                showAlert: { print("Alert requested: \($0)") },
-                setFavouriteAssets: { print("Set favourite assets: \($0)") },
-                fetchFavouriteAssets: { [] },
-                fetchAssetsPerformance: { [] },
-                formatLastUpdatedDate: { _ in "" }
+    extension AssetsListDomain {
+        static func makeAssetsListPreviewStore(state: AssetsListDomain.Feature.State) -> Store<AssetsListDomain.Feature.State, AssetsListDomain.Feature.Action> {
+            Store(initialState: state) {
+                AssetsListDomain.Feature(
+                    showPopup: { _ in },
+                    showAlert: { _ in },
+                    setFavouriteAssets: { _ in },
+                    fetchFavouriteAssets: { [] },
+                    fetchAssetsPerformance: { [] },
+                    formatLastUpdatedDate: { _ in "" }
+                )
+            }
+        }
+    }
+
+    extension FavouriteAssetsDomain {
+        static func makeFavouriteAssetsPreviewStore(state: FavouriteAssetsDomain.Feature.State) -> Store<FavouriteAssetsDomain.Feature.State, FavouriteAssetsDomain.Feature.Action> {
+            Store(
+                initialState: state,
+                reducer: FavouriteAssetsDomain.Feature(
+                    fetchAssets: { [] },
+                    fetchFavouriteAssetsIDs: { [] },
+                    goBack: {}
+                )
             )
         }
     }
