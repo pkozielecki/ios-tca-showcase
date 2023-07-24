@@ -67,4 +67,18 @@ import SwiftUI
             )
         }
     }
+
+    extension AppInfoDomain {
+        static func makeAppInfoPreviewStore(state: AppInfoDomain.Feature.State) -> Store<AppInfoDomain.Feature.State, AppInfoDomain.Feature.Action> {
+            Store(
+                initialState: state,
+                reducer: AppInfoDomain.Feature(
+                    fetchLatestAppVersion: { "" },
+                    currentAppVersion: { "" },
+                    openAppStore: {},
+                    goBack: {}
+                )
+            )
+        }
+    }
 #endif

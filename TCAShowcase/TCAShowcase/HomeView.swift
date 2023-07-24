@@ -44,7 +44,7 @@ struct HomeView<Router: SwiftUINavigationRouter>: View {
                         case .appInfo:
                             makeAppInfoView()
                         case .addAsset:
-                            makeAddAssetView()
+                            makeManageFavouriteAssetsView()
                         }
                     }
                 }
@@ -64,7 +64,7 @@ struct HomeView<Router: SwiftUINavigationRouter>: View {
 
 private extension HomeView {
 
-    func makeAddAssetView() -> some View {
+    func makeManageFavouriteAssetsView() -> some View {
         IfLetStore(
             store.scope(
                 state: \.manageFavouriteAssetsState,
@@ -85,10 +85,8 @@ private extension HomeView {
 
     func makeAppInfoView() -> some View {
         let dependenciesProvider = DependenciesProvider.shared
-        let store = Store(
-            initialState: AppInfoDomain.State(),
-            reducer: AppInfoDomain.reducer,
-            environment: AppInfoDomain.Environment(
+        let store = Store(initialState: AppInfoDomain.Feature.State()) {
+            AppInfoDomain.Feature(
                 fetchLatestAppVersion: { await dependenciesProvider.availableAppVersionProvider.fetchLatestAppStoreVersion() },
                 currentAppVersion: { dependenciesProvider.appVersionProvider.currentAppVersion },
                 openAppStore: {
@@ -98,7 +96,7 @@ private extension HomeView {
                 },
                 goBack: { dependenciesProvider.router.presentedPopup = nil }
             )
-        )
+        }
         return AppInfoView(store: store)
     }
 }

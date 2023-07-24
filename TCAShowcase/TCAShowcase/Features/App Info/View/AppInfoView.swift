@@ -8,10 +8,10 @@ import Foundation
 import SwiftUI
 
 struct AppInfoView: View {
-    let store: Store<AppInfoDomain.State, AppInfoDomain.Action>
-    @ObservedObject var viewStore: ViewStore<AppInfoDomain.State, AppInfoDomain.Action>
+    let store: StoreOf<AppInfoDomain.Feature>
+    @ObservedObject var viewStore: ViewStoreOf<AppInfoDomain.Feature>
 
-    init(store: Store<AppInfoDomain.State, AppInfoDomain.Action>) {
+    init(store: StoreOf<AppInfoDomain.Feature>) {
         self.store = store
         viewStore = ViewStore(store)
     }
@@ -107,16 +107,7 @@ struct AppInfoView_Previews: PreviewProvider {
 //        let viewState = AppInfoViewState.checking
 //        let viewState = AppInfoViewState.appUpToDate(currentVersion: "1.0.0")
         let viewState = AppInfoViewState.appUpdateAvailable(currentVersion: "1.0.0", availableVersion: "1.1.0")
-        let store = Store(
-            initialState: AppInfoDomain.State(viewState: viewState),
-            reducer: AppInfoDomain.reducer,
-            environment: AppInfoDomain.Environment(
-                fetchLatestAppVersion: { "1.0.0" },
-                currentAppVersion: { "1.0.0" },
-                openAppStore: {},
-                goBack: {}
-            )
-        )
+        let store = AppInfoDomain.makeAppInfoPreviewStore(state: AppInfoDomain.Feature.State(viewState: viewState))
         return AppInfoView(store: store)
     }
 }

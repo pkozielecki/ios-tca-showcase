@@ -7,52 +7,52 @@ import ComposableArchitecture
 import Foundation
 
 enum AppInfoDomain {
+    struct Feature: ReducerProtocol {
+        struct State: Equatable {
+            var viewState: AppInfoViewState = .checking
+        }
 
-    struct State: Equatable {
-        var viewState: AppInfoViewState = .checking
-    }
+        enum Action: Equatable {
+            case fetchLatestAppVersion
+            case latestAppVersionRetrieved(String)
+            case updateAppTapped
+            case goBackTapped
+        }
 
-    enum Action: Equatable {
-        case fetchLatestAppVersion
-        case latestAppVersionRetrieved(String)
-        case updateAppTapped
-        case goBackTapped
-    }
-
-    struct Environment {
+        // TODO: Try @Dependency approach:
         var fetchLatestAppVersion: () async -> String
         var currentAppVersion: () -> String
         var openAppStore: () -> Void
         var goBack: () -> Void
-    }
 
-    static let reducer = AnyReducer<State, Action, Environment> { state, action, environment in
-        switch action {
+        func reduce(into state: inout State, action: Action) -> EffectOf<Feature> {
+            switch action {
 
-        case .fetchLatestAppVersion:
-            state.viewState = .checking
-            return EffectTask.task {
-                .latestAppVersionRetrieved(await environment.fetchLatestAppVersion())
-            }
+            case .fetchLatestAppVersion:
+                state.viewState = .checking
+                return EffectTask.task {
+                    .latestAppVersionRetrieved(await fetchLatestAppVersion())
+                }
 
-        case let .latestAppVersionRetrieved(availableVersion):
-            let currentVersion = environment.currentAppVersion()
-            if currentVersion < availableVersion {
-                state.viewState = .appUpdateAvailable(currentVersion: currentVersion, availableVersion: availableVersion)
-            } else {
-                state.viewState = .appUpToDate(currentVersion: currentVersion)
-            }
-            return .none
+            case let .latestAppVersionRetrieved(availableVersion):
+                let currentVersion = currentAppVersion()
+                if currentVersion < availableVersion {
+                    state.viewState = .appUpdateAvailable(currentVersion: currentVersion, availableVersion: availableVersion)
+                } else {
+                    state.viewState = .appUpToDate(currentVersion: currentVersion)
+                }
+                return .none
 
-        case .goBackTapped:
-            return .fireAndForget {
-                environment.goBack()
-            }
+            case .goBackTapped:
+                return .fireAndForget {
+                    goBack()
+                }
 
-        case .updateAppTapped:
-            return .fireAndForget {
-                environment.goBack()
-                environment.openAppStore()
+            case .updateAppTapped:
+                return .fireAndForget {
+                    goBack()
+                    openAppStore()
+                }
             }
         }
     }
