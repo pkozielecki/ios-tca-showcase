@@ -45,6 +45,7 @@ import SwiftUI
             Store(initialState: state) {
                 AssetsListDomain.Feature(
                     showPopup: { _ in },
+                    push: { _ in },
                     showAlert: { _ in },
                     setFavouriteAssets: { _ in },
                     fetchFavouriteAssets: { [] },

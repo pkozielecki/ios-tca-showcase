@@ -61,8 +61,8 @@ struct AssetsListView: View {
                         ForEach(assets) { data in
                             FavouriteAssetCellView(
                                 data: data,
-                                onSelectTapped: { viewStore.send(.assetTapped(id: $0)) },
-                                onEditTapped: { print("Edit tapped: \($0)") },
+                                onSelectTapped: { viewStore.send(.assetDetailsTapped(assetData: AssetDetailsViewData(id: $0, name: $1))) },
+                                onEditTapped: { viewStore.send(.editAssetTapped(id: $0)) },
                                 onDeleteTapped: { viewStore.send(.deleteAssetRequested(id: $0)) }
                             )
                             .noInsetsCell()

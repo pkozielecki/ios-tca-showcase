@@ -33,8 +33,8 @@ struct HomeView<Router: SwiftUINavigationRouter>: View {
                     switch route {
                     case let .editAsset(id):
                         makeEditAssetView(id: id)
-                    case let .assetDetails(id):
-                        makeAssetDetailsView(id: id)
+                    case .assetDetails:
+                        makeAssetDetailsView()
                     }
                 }
                 .sheet(item: $router.presentedPopup) { _ in
@@ -64,6 +64,10 @@ struct HomeView<Router: SwiftUINavigationRouter>: View {
 
 private extension HomeView {
 
+    var dependenciesProvider: DependenciesProvider {
+        DependenciesProvider.shared
+    }
+
     func makeManageFavouriteAssetsView() -> some View {
         IfLetStore(
             store.scope(
@@ -79,23 +83,20 @@ private extension HomeView {
         EmptyView()
     }
 
-    func makeAssetDetailsView(id: String) -> some View {
-        EmptyView()
+    func makeAssetDetailsView() -> some View {
+        IfLetStore(
+            store.scope(
+                state: \.assetDetailsState,
+                action: AssetsListDomain.Feature.Action.assetDetails
+            )
+        ) { store in
+            AssetDetailsView(store: store)
+        }
     }
 
     func makeAppInfoView() -> some View {
-        let dependenciesProvider = DependenciesProvider.shared
         let store = Store(initialState: AppInfoDomain.Feature.State()) {
-            AppInfoDomain.Feature(
-                fetchLatestAppVersion: { await dependenciesProvider.availableAppVersionProvider.fetchLatestAppStoreVersion() },
-                currentAppVersion: { dependenciesProvider.appVersionProvider.currentAppVersion },
-                openAppStore: {
-                    if dependenciesProvider.urlOpener.canOpenURL(AppConfiguration.appstoreURL) {
-                        dependenciesProvider.urlOpener.open(AppConfiguration.appstoreURL)
-                    }
-                },
-                goBack: { dependenciesProvider.router.presentedPopup = nil }
-            )
+            AppInfoDomain.Feature.makeDefault()
         }
         return AppInfoView(store: store)
     }

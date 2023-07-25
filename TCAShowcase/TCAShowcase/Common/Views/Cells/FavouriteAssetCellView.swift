@@ -7,13 +7,13 @@ import SwiftUI
 
 struct FavouriteAssetCellView: View {
     let data: FavouriteAssetCellView.Data
-    let onSelectTapped: ((String) -> Void)?
+    let onSelectTapped: ((String, String) -> Void)?
     let onEditTapped: ((String) -> Void)?
     let onDeleteTapped: ((String) -> Void)?
 
     var body: some View {
         Button(action: {
-            onSelectTapped?(data.id)
+            onSelectTapped?(data.id, data.title)
         }, label: {
             HStack {
                 Text(data.id)

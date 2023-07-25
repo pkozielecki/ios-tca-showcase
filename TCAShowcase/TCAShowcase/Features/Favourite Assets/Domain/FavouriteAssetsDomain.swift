@@ -68,6 +68,23 @@ enum FavouriteAssetsDomain {
     }
 }
 
+extension FavouriteAssetsDomain.Feature {
+    static func makeDefault() -> FavouriteAssetsDomain.Feature {
+        let dependencies = DependenciesProvider.shared
+        return FavouriteAssetsDomain.Feature(
+            fetchAssets: {
+                await dependencies.assetsProvider.fetchAssets()
+            },
+            fetchFavouriteAssetsIDs: {
+                dependencies.favouriteAssetsManager.retrieveFavouriteAssets().map(\.id)
+            },
+            goBack: {
+                dependencies.router.dismiss()
+            }
+        )
+    }
+}
+
 extension Array where Element == Asset {
 
     func toCellData(selectedAssetsIDs: [String]) -> [AssetCellView.Data] {

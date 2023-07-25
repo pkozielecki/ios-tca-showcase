@@ -58,6 +58,22 @@ enum AppInfoDomain {
     }
 }
 
+extension AppInfoDomain.Feature {
+    static func makeDefault() -> AppInfoDomain.Feature {
+        let dependencies = DependenciesProvider.shared
+        return AppInfoDomain.Feature(
+            fetchLatestAppVersion: { await dependencies.availableAppVersionProvider.fetchLatestAppStoreVersion() },
+            currentAppVersion: { dependencies.appVersionProvider.currentAppVersion },
+            openAppStore: {
+                if dependencies.urlOpener.canOpenURL(AppConfiguration.appstoreURL) {
+                    dependencies.urlOpener.open(AppConfiguration.appstoreURL)
+                }
+            },
+            goBack: { dependencies.router.presentedPopup = nil }
+        )
+    }
+}
+
 enum AppInfoViewState: Equatable {
 
     /// View is loading.

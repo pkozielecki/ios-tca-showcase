@@ -14,6 +14,7 @@ struct TCAShowcaseApp: App {
         let store = Store(initialState: AssetsListDomain.Feature.State()) {
             AssetsListDomain.Feature(
                 showPopup: { router.presentedPopup = $0 },
+                push: { router.push(route: $0) },
                 showAlert: { router.presentedAlert = $0 },
                 setFavouriteAssets: { assets in
                     DependenciesProvider.shared.favouriteAssetsManager.store(favouriteAssets: assets)
@@ -47,6 +48,10 @@ final class DependenciesProvider {
     private(set) lazy var favouriteAssetsManager = DefaultFavouriteAssetsManager()
     private(set) lazy var assetsPerformanceProvider = DefaultAssetsRatesProvider(
         favouriteAssetsProvider: favouriteAssetsManager,
+        networkModule: networkingModule,
+        baseAssetProvider: baseAssetManager
+    )
+    private(set) lazy var assetsHistoricalDataProvider = DefaultHistoricalAssetRatesProvider(
         networkModule: networkingModule,
         baseAssetProvider: baseAssetManager
     )

@@ -15,6 +15,7 @@ enum AssetsListDomain {
             var favouriteAssets: [Asset] = []
             var viewState: AssetsListViewState = .noAssets
             var manageFavouriteAssetsState: FavouriteAssetsDomain.Feature.State?
+            var assetDetailsState: AssetDetailsDomain.Feature.State?
         }
 
         enum Action: Equatable {
@@ -23,10 +24,14 @@ enum AssetsListDomain {
             case loadAssetsPerformanceLoaded([AssetPerformance])
 
             /// Selecting an asset:
-            case assetTapped(id: String)
+            case assetDetailsTapped(assetData: AssetDetailsViewData)
+            case assetDetails(AssetDetailsDomain.Feature.Action)
 
             /// App info:
             case appInfoTapped
+
+            /// Edit asset:
+            case editAssetTapped(id: String)
 
             /// Managing favourite assets:
             case addAssetsToFavouritesTapped
@@ -37,6 +42,7 @@ enum AssetsListDomain {
 
         // TODO: Try @Dependency approach: https://pointfreeco.github.io/swift-composable-architecture/0.41.0/documentation/composablearchitecture/dependencymanagement/
         var showPopup: (_ route: PopupRoute) -> Void
+        var push: (_ route: NavigationRoute) -> Void
         var showAlert: (_ route: AlertRoute) -> Void
         var setFavouriteAssets: (_ ids: [Asset]) async -> Void
         var fetchFavouriteAssets: () -> [Asset]
@@ -66,11 +72,6 @@ enum AssetsListDomain {
                     }
                     let lastUpdated = formatLastUpdatedDate(rates.first?.price?.date)
                     state.viewState = .loaded(data, lastUpdated)
-                    return .none
-
-                // Handling asset selection:
-                case let .assetTapped(id):
-                    print("Select asset \(id)")
                     return .none
 
                 // Handling add / manage favourite asset tap:
@@ -113,6 +114,22 @@ enum AssetsListDomain {
                         return .loadAssetsPerformanceRequested
                     }
 
+                case let .assetDetailsTapped(asset):
+                    state.assetDetailsState = .init(asset: asset)
+                    push(.assetDetails)
+                    return .none
+
+                // Handling asset selection for edition (from details view):
+                case let .assetDetails(.assetSelectedForEdition(assetID)):
+                    return EffectTask.task {
+                        .editAssetTapped(id: assetID)
+                    }
+
+                // Handling general asset selection:
+                case let .editAssetTapped(id):
+                    print("Asset \(id) selected for edition")
+                    return .none
+
                 // Handling app info tap:
                 case .appInfoTapped:
                     showPopup(.appInfo)
@@ -123,17 +140,10 @@ enum AssetsListDomain {
                 }
             }
             .ifLet(\.manageFavouriteAssetsState, action: /Action.addAssetsToFavourites) {
-                FavouriteAssetsDomain.Feature(
-                    fetchAssets: {
-                        await DependenciesProvider.shared.assetsProvider.fetchAssets()
-                    },
-                    fetchFavouriteAssetsIDs: {
-                        DependenciesProvider.shared.favouriteAssetsManager.retrieveFavouriteAssets().map(\.id)
-                    },
-                    goBack: {
-                        DependenciesProvider.shared.router.dismiss()
-                    }
-                )
+                FavouriteAssetsDomain.Feature.makeDefault()
+            }
+            .ifLet(\.assetDetailsState, action: /Action.assetDetails) {
+                AssetDetailsDomain.Feature.makeDefault()
             }
         }
     }
