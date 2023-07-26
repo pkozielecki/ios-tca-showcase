@@ -116,7 +116,7 @@ private extension AssetsListView {
             //  let viewState = AssetsListViewState.loading([.init(id: "EUR", title: "Euro", value: nil), .init(id: "BTC", title: "Bitcoin", value: nil)])
             let viewState = AssetsListViewState.loaded([.init(id: "EUR", title: "Euro", color: .primary, value: "1.2"), .init(id: "BTC", title: "Bitcoin", color: .primary, value: "28872")], "2023-05-10 12:30:12")
             let state = AssetsListDomain.Feature.State(viewState: viewState)
-            AssetsListView(store: AssetsListDomain.makeAssetsListPreviewStore(state: state))
+            AssetsListView(store: AssetsListDomain.makePreviewStore(state: state))
         }
     }
 #endif

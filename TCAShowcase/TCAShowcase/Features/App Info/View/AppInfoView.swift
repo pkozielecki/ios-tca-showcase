@@ -107,7 +107,7 @@ struct AppInfoView_Previews: PreviewProvider {
 //        let viewState = AppInfoViewState.checking
 //        let viewState = AppInfoViewState.appUpToDate(currentVersion: "1.0.0")
         let viewState = AppInfoViewState.appUpdateAvailable(currentVersion: "1.0.0", availableVersion: "1.1.0")
-        let store = AppInfoDomain.makeAppInfoPreviewStore(state: AppInfoDomain.Feature.State(viewState: viewState))
+        let store = AppInfoDomain.makePreviewStore(state: AppInfoDomain.Feature.State(viewState: viewState))
         return AppInfoView(store: store)
     }
 }

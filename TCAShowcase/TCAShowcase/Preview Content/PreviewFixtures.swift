@@ -41,13 +41,14 @@ import SwiftUI
     }
 
     extension AssetsListDomain {
-        static func makeAssetsListPreviewStore(state: AssetsListDomain.Feature.State) -> Store<AssetsListDomain.Feature.State, AssetsListDomain.Feature.Action> {
+        static func makePreviewStore(state: AssetsListDomain.Feature.State) -> Store<AssetsListDomain.Feature.State, AssetsListDomain.Feature.Action> {
             Store(initialState: state) {
                 AssetsListDomain.Feature(
                     showPopup: { _ in },
                     push: { _ in },
                     showAlert: { _ in },
                     setFavouriteAssets: { _ in },
+                    updateFavouriteAssetWith: { _ in },
                     fetchFavouriteAssets: { [] },
                     fetchAssetsPerformance: { [] },
                     formatLastUpdatedDate: { _ in "" }
@@ -57,12 +58,11 @@ import SwiftUI
     }
 
     extension FavouriteAssetsDomain {
-        static func makeFavouriteAssetsPreviewStore(state: FavouriteAssetsDomain.Feature.State) -> Store<FavouriteAssetsDomain.Feature.State, FavouriteAssetsDomain.Feature.Action> {
+        static func makePreviewStore(state: FavouriteAssetsDomain.Feature.State) -> Store<FavouriteAssetsDomain.Feature.State, FavouriteAssetsDomain.Feature.Action> {
             Store(
                 initialState: state,
                 reducer: FavouriteAssetsDomain.Feature(
                     fetchAssets: { [] },
-                    fetchFavouriteAssetsIDs: { [] },
                     goBack: {}
                 )
             )
@@ -70,13 +70,35 @@ import SwiftUI
     }
 
     extension AppInfoDomain {
-        static func makeAppInfoPreviewStore(state: AppInfoDomain.Feature.State) -> Store<AppInfoDomain.Feature.State, AppInfoDomain.Feature.Action> {
+        static func makePreviewStore(state: AppInfoDomain.Feature.State) -> Store<AppInfoDomain.Feature.State, AppInfoDomain.Feature.Action> {
             Store(
                 initialState: state,
                 reducer: AppInfoDomain.Feature(
                     fetchLatestAppVersion: { "" },
                     currentAppVersion: { "" },
                     openAppStore: {},
+                    goBack: {}
+                )
+            )
+        }
+    }
+
+    extension AssetDetailsDomain {
+        static func makePreviewStore(state: AssetDetailsDomain.Feature.State) -> Store<AssetDetailsDomain.Feature.State, AssetDetailsDomain.Feature.Action> {
+            Store(
+                initialState: state,
+                reducer: AssetDetailsDomain.Feature(
+                    fetchAssetPerformance: { _, _ in [] }
+                )
+            )
+        }
+    }
+
+    extension EditAssetDomain {
+        static func makePreviewStore(state: EditAssetDomain.Feature.State) -> Store<EditAssetDomain.Feature.State, EditAssetDomain.Feature.Action> {
+            Store(
+                initialState: state,
+                reducer: EditAssetDomain.Feature(
                     goBack: {}
                 )
             )

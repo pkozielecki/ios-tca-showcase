@@ -9,8 +9,8 @@ import Foundation
 enum FavouriteAssetsDomain {
     struct Feature: ReducerProtocol {
         struct State: Equatable {
+            var selectedAssetsIDs: [String]
             var assets: [Asset] = []
-            var selectedAssetsIDs: [String] = []
             var viewState: AddAssetViewState = .loading
         }
 
@@ -24,19 +24,12 @@ enum FavouriteAssetsDomain {
 
         // TODO: Try @Dependency approach: https://pointfreeco.github.io/swift-composable-architecture/0.41.0/documentation/composablearchitecture/dependencymanagement/
         var fetchAssets: () async -> [Asset]
-        var fetchFavouriteAssetsIDs: () -> [String]
         var goBack: () -> Void
 
-        /// Implement `reduce(into:action)` function in "leaf-nodes" which means reducers where no other reducers are merged
-        /// https://pointfreeco.github.io/swift-composable-architecture/main/documentation/composablearchitecture/reducerprotocol/reduce(into:action:)-8yinq
-        /// It may be not stated clearly in this link but you may find this in TCA examples and `isowords` game
-        /// If you need to combine reducers into higher-order reducer - then use `var body` property just like in SwiftUI
         func reduce(into state: inout State, action: Action) -> EffectOf<Feature> {
-
             switch action {
             //  Downloads available assets to visualise them in the list (for user to choose from):
             case .fetchAssets:
-                state.selectedAssetsIDs = fetchFavouriteAssetsIDs()
                 state.viewState = .loading
                 return EffectTask.task {
                     .assetsFetched(await fetchAssets())
@@ -74,9 +67,6 @@ extension FavouriteAssetsDomain.Feature {
         return FavouriteAssetsDomain.Feature(
             fetchAssets: {
                 await dependencies.assetsProvider.fetchAssets()
-            },
-            fetchFavouriteAssetsIDs: {
-                dependencies.favouriteAssetsManager.retrieveFavouriteAssets().map(\.id)
             },
             goBack: {
                 dependencies.router.dismiss()

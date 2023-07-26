@@ -21,6 +21,11 @@ protocol FavouriteAssetsStorage: AnyObject {
     /// - Parameter assets: a list of assets.
     func store(favouriteAssets assets: [Asset])
 
+    /// Updates an asset with new data.
+    ///
+    /// - Parameter asset: an asset data to update.
+    func update(asset: EditedAssetData)
+
     /// Clears the list of favourite assets.
     func clear()
 }
@@ -48,6 +53,16 @@ final class DefaultFavouriteAssetsManager: FavouriteAssetsManager {
     /// - SeeAlso: FavouriteAssetsManager.store(assets:)
     func store(favouriteAssets assets: [Asset]) {
         localStorage.set(assets.data, forKey: Const.Key)
+    }
+
+    /// - SeeAlso: FavouriteAssetsManager.update(asset:)
+    func update(asset assetData: EditedAssetData) {
+        let colorCode = assetData.color == .primary ? nil : assetData.color.toHex()
+        let asset = Asset(id: assetData.id, name: assetData.name, colorCode: colorCode)
+        var assets = retrieveFavouriteAssets()
+        assets.removeAll { $0.id == assetData.id }
+        assets.insert(asset, at: assetData.position.currentPosition - 1)
+        store(favouriteAssets: assets)
     }
 
     /// - SeeAlso: FavouriteAssetsManager.clear()

@@ -18,7 +18,7 @@ enum PopupRoute: Hashable, Codable, Identifiable {
 /// A structure describing app navigation route.
 enum NavigationRoute: Hashable, Codable, Identifiable {
     case assetDetails
-    case editAsset(String)
+    case editAsset
 
     var id: Int {
         hashValue

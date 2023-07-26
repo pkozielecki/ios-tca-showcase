@@ -11,19 +11,23 @@ struct TCAShowcaseApp: App {
     let router = DependenciesProvider.shared.router
 
     var body: some Scene {
+        let dependenciesProvider = DependenciesProvider.shared
         let store = Store(initialState: AssetsListDomain.Feature.State()) {
             AssetsListDomain.Feature(
                 showPopup: { router.presentedPopup = $0 },
                 push: { router.push(route: $0) },
                 showAlert: { router.presentedAlert = $0 },
                 setFavouriteAssets: { assets in
-                    DependenciesProvider.shared.favouriteAssetsManager.store(favouriteAssets: assets)
+                    dependenciesProvider.favouriteAssetsManager.store(favouriteAssets: assets)
+                },
+                updateFavouriteAssetWith: { assetData in
+                    dependenciesProvider.favouriteAssetsManager.update(asset: assetData)
                 },
                 fetchFavouriteAssets: {
-                    DependenciesProvider.shared.favouriteAssetsManager.retrieveFavouriteAssets()
+                    dependenciesProvider.favouriteAssetsManager.retrieveFavouriteAssets()
                 },
                 fetchAssetsPerformance: {
-                    await DependenciesProvider.shared.assetsPerformanceProvider.getAssetRates()
+                    await dependenciesProvider.assetsPerformanceProvider.getAssetRates()
                 },
                 formatLastUpdatedDate: { date in
                     DateFormatter.fullDateFormatter.string(from: date ?? Date())

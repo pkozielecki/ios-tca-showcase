@@ -121,9 +121,9 @@ private extension FavouriteAssetsView {
                 AssetCellView.Data(id: "Ag", title: "Silver", isSelected: true)
             ])
 
-            var state = FavouriteAssetsDomain.Feature.State()
+            var state = FavouriteAssetsDomain.Feature.State(selectedAssetsIDs: ["Au"])
             state.viewState = viewState
-            return FavouriteAssetsView(store: FavouriteAssetsDomain.makeFavouriteAssetsPreviewStore(state: state))
+            return FavouriteAssetsView(store: FavouriteAssetsDomain.makePreviewStore(state: state))
         }
     }
 #endif

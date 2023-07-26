@@ -16,6 +16,7 @@ enum AssetsListDomain {
             var viewState: AssetsListViewState = .noAssets
             var manageFavouriteAssetsState: FavouriteAssetsDomain.Feature.State?
             var assetDetailsState: AssetDetailsDomain.Feature.State?
+            var editAssetState: EditAssetDomain.Feature.State?
         }
 
         enum Action: Equatable {
@@ -32,6 +33,7 @@ enum AssetsListDomain {
 
             /// Edit asset:
             case editAssetTapped(id: String)
+            case editAsset(EditAssetDomain.Feature.Action)
 
             /// Managing favourite assets:
             case addAssetsToFavouritesTapped
@@ -44,108 +46,157 @@ enum AssetsListDomain {
         var showPopup: (_ route: PopupRoute) -> Void
         var push: (_ route: NavigationRoute) -> Void
         var showAlert: (_ route: AlertRoute) -> Void
-        var setFavouriteAssets: (_ ids: [Asset]) async -> Void
+        var setFavouriteAssets: (_ assets: [Asset]) async -> Void
+        var updateFavouriteAssetWith: (_ asset: EditedAssetData) async -> Void
         var fetchFavouriteAssets: () -> [Asset]
         var fetchAssetsPerformance: () async -> [AssetPerformance]
         var formatLastUpdatedDate: (_ date: Date?) -> String
 
         var body: some ReducerProtocol<State, Action> {
-            Reduce { state, action in
-                switch action {
+            Reduce(core)
+                .ifLet(\.manageFavouriteAssetsState, action: /Action.addAssetsToFavourites) {
+                    FavouriteAssetsDomain.Feature.makeDefault()
+                }
+                .ifLet(\.editAssetState, action: /Action.editAsset) {
+                    EditAssetDomain.Feature.makeDefault()
+                }
+                .ifLet(\.assetDetailsState, action: /Action.assetDetails) {
+                    AssetDetailsDomain.Feature.makeDefault()
+                }
+        }
 
-                // Fetching assets current performance:
-                case .loadAssetsPerformanceRequested:
-                    state.favouriteAssets = fetchFavouriteAssets()
-                    state.viewState = .loading(state.favouriteAssets.map { FavouriteAssetCellView.Data(asset: $0) })
-                    return EffectTask.task {
-                        let performance = await fetchAssetsPerformance()
-                        return .loadAssetsPerformanceLoaded(performance)
-                    }
+        func core(state: inout State, action: Action) -> EffectTask<Action> {
+            switch action {
 
-                // Handling asset perfomance data loaded:
-                case let .loadAssetsPerformanceLoaded(rates):
-                    guard !rates.isEmpty else { return .none }
-                    let data = state.favouriteAssets.map { favouriteAsset in
-                        let rate = rates.first { $0.id == favouriteAsset.id }
-                        let formattedValue = rate?.price?.formattedPrice
-                        return FavouriteAssetCellView.Data(asset: favouriteAsset, formattedValue: formattedValue)
-                    }
-                    let lastUpdated = formatLastUpdatedDate(rates.first?.price?.date)
-                    state.viewState = .loaded(data, lastUpdated)
-                    return .none
+                // MARK: Assets list:
 
-                // Handling add / manage favourite asset tap:
-                case .addAssetsToFavouritesTapped:
-                    state.manageFavouriteAssetsState = FavouriteAssetsDomain.Feature.State()
+            case .loadAssetsPerformanceRequested:
+                state.favouriteAssets = fetchFavouriteAssets()
+                state.viewState = .loading(state.favouriteAssets.map { FavouriteAssetCellView.Data(asset: $0) })
+                return EffectTask.task {
+                    let performance = await fetchAssetsPerformance()
+                    return .loadAssetsPerformanceLoaded(performance)
+                }
+
+            case let .loadAssetsPerformanceLoaded(rates):
+                guard !rates.isEmpty else { return .none }
+                let data = state.favouriteAssets.map { favouriteAsset in
+                    let rate = rates.first { $0.id == favouriteAsset.id }
+                    let formattedValue = rate?.price?.formattedPrice
+                    return FavouriteAssetCellView.Data(asset: favouriteAsset, formattedValue: formattedValue)
+                }
+                let lastUpdated = formatLastUpdatedDate(rates.first?.price?.date)
+                state.viewState = .loaded(data, lastUpdated)
+                return .none
+
+                // MARK: Favourite assets:
+
+            case .addAssetsToFavouritesTapped:
+                let selectedAssetsIDs = state.favouriteAssets.map(\.id)
+                state.manageFavouriteAssetsState = FavouriteAssetsDomain.Feature.State(selectedAssetsIDs: selectedAssetsIDs)
+                return .fireAndForget {
                     showPopup(.addAsset)
-                    return .none
+                }
 
-                // Handling assets selected as favourites:
-                case .addAssetsToFavourites(.confirmAssetsSelection):
-                    guard let selectedAssetsIDs = state.manageFavouriteAssetsState?.selectedAssetsIDs,
-                          let assets = state.manageFavouriteAssetsState?.assets
-                    else {
-                        return .none
-                    }
+            case .addAssetsToFavourites(.confirmAssetsSelection):
+                let selectedAssetsIDs = state.manageFavouriteAssetsState?.selectedAssetsIDs
+                let selectedAssets = state.manageFavouriteAssetsState?.assets.filter { selectedAssetsIDs?.contains($0.id) ?? false }
+                let updatedFavouriteAssets = composeFavouriteAssets(
+                    currentAssets: state.favouriteAssets,
+                    newAssets: selectedAssets ?? state.favouriteAssets
+                )
+                state.manageFavouriteAssetsState = nil
 
-                    state.manageFavouriteAssetsState = nil
-                    return EffectTask.task {
-                        let selectedAssets = selectedAssetsIDs.compactMap { id in
-                            assets.first { $0.id == id }
-                        }
-                        await setFavouriteAssets(selectedAssets)
-                        return .loadAssetsPerformanceRequested
-                    }
+                return EffectTask.task {
+                    await setFavouriteAssets(updatedFavouriteAssets)
+                    return .loadAssetsPerformanceRequested
+                }
 
-                // Handling asset selected for deletion:
-                case let .deleteAssetRequested(id):
-                    let asset = state.favouriteAssets.first { $0.id == id }
-                    let assetName = asset?.name ?? ""
-                    return .fireAndForget {
-                        showAlert(.deleteAsset(assetId: id, assetName: assetName))
-                    }
+                // MARK: Removing an asset:
 
-                // Handling asset deletion confirmation:
-                case let .deleteAssetConfirmed(id):
-                    state.favouriteAssets.removeAll { $0.id == id }
-                    let assets = state.favouriteAssets
-                    return EffectTask.task {
-                        await setFavouriteAssets(assets)
-                        return .loadAssetsPerformanceRequested
-                    }
+            case let .deleteAssetRequested(id):
+                let asset = state.favouriteAssets.first { $0.id == id }
+                let assetName = asset?.name ?? ""
+                return .fireAndForget {
+                    showAlert(.deleteAsset(assetId: id, assetName: assetName))
+                }
 
-                case let .assetDetailsTapped(asset):
-                    state.assetDetailsState = .init(asset: asset)
+            case let .deleteAssetConfirmed(id):
+                state.favouriteAssets.removeAll { $0.id == id }
+                let assets = state.favouriteAssets
+                return EffectTask.task {
+                    await setFavouriteAssets(assets)
+                    return .loadAssetsPerformanceRequested
+                }
+
+                // MARK: Asset details:
+
+            case let .assetDetailsTapped(asset):
+                state.assetDetailsState = .init(asset: asset)
+                return .fireAndForget {
                     push(.assetDetails)
-                    return .none
+                }
 
-                // Handling asset selection for edition (from details view):
-                case let .assetDetails(.assetSelectedForEdition(assetID)):
-                    return EffectTask.task {
-                        .editAssetTapped(id: assetID)
-                    }
+            case let .assetDetails(.assetSelectedForEdition(assetID)):
+                return EffectTask.task {
+                    .editAssetTapped(id: assetID)
+                }
 
-                // Handling general asset selection:
-                case let .editAssetTapped(id):
-                    print("Asset \(id) selected for edition")
-                    return .none
+                // MARK: Editing asset:
 
-                // Handling app info tap:
-                case .appInfoTapped:
-                    showPopup(.appInfo)
-                    return .none
-
-                default:
+            case let .editAssetTapped(id):
+                guard let asset = state.favouriteAssets.first(where: {
+                    $0.id == id
+                }) else {
                     return .none
                 }
-            }
-            .ifLet(\.manageFavouriteAssetsState, action: /Action.addAssetsToFavourites) {
-                FavouriteAssetsDomain.Feature.makeDefault()
-            }
-            .ifLet(\.assetDetailsState, action: /Action.assetDetails) {
-                AssetDetailsDomain.Feature.makeDefault()
+
+                let data = EditedAssetData(
+                    asset: asset,
+                    position: state.favouriteAssets.firstIndex(of: asset) ?? 0,
+                    totalAssetCount: state.favouriteAssets.count
+                )
+                state.editAssetState = .init(editedAssetData: data)
+                return .fireAndForget {
+                    push(.editAsset)
+                }
+
+            case .editAsset(.updateAsset):
+                guard let updatedAsset = state.editAssetState?.editedAssetData else {
+                    return .none
+                }
+                state.editAssetState = nil
+                return EffectTask.task {
+                    await updateFavouriteAssetWith(updatedAsset)
+                    return .loadAssetsPerformanceRequested
+                }
+
+                // MARK: App info:
+
+            case .appInfoTapped:
+                return .fireAndForget {
+                    showPopup(.appInfo)
+                }
+
+            default:
+                return .none
             }
         }
+    }
+}
+
+private extension AssetsListDomain.Feature {
+
+    func composeFavouriteAssets(currentAssets: [Asset], newAssets: [Asset]) -> [Asset] {
+        let currentAssetsIDs = currentAssets.map(\.id)
+        let newAssetsIDs = newAssets.map(\.id)
+        let removedAssetsIDs = currentAssetsIDs.filter { !newAssetsIDs.contains($0) }
+        let addedAssets = newAssets.filter { !currentAssetsIDs.contains($0.id) }
+
+        var assets = currentAssets
+        assets.removeAll { removedAssetsIDs.contains($0.id) }
+        assets.append(contentsOf: addedAssets)
+        return assets
     }
 }
 

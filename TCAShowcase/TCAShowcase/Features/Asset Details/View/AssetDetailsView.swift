@@ -125,18 +125,19 @@ private extension AssetDetailsView {
     }
 }
 
-// struct AssetDetailsView_Previews: PreviewProvider {
-//    static var previews: some View {
+struct AssetDetailsView_Previews: PreviewProvider {
+    static var previews: some View {
 //        let viewState = AssetDetailsViewState.loading
-////        let viewState = AssetDetailsViewState.loaded([
-////            .init(label: "01/2023", value: 10123),
-////            .init(label: "02/2023", value: 15000),
-////            .init(label: "03/2023", value: 13000),
-////            .init(label: "04/2023", value: 17000),
-////            .init(label: "05/2023", value: 20000)
-////        ])
-////        let viewState = AssetDetailsViewState.failed("An unknown network error has occurred\nTry again later.")
-//        let viewModel = PreviewAssetDetailsViewModel(state: viewState)
-//        return AssetDetailsView(viewModel: viewModel)
-//    }
-// }
+        let viewState = AssetDetailsViewState.loaded([
+            .init(label: "01/2023", value: 10123),
+            .init(label: "02/2023", value: 15000),
+            .init(label: "03/2023", value: 13000),
+            .init(label: "04/2023", value: 17000),
+            .init(label: "05/2023", value: 20000)
+        ])
+
+        var state = AssetDetailsDomain.Feature.State(asset: .init(id: "", name: "Gold"), viewState: viewState)
+        state.viewState = viewState
+        return AssetDetailsView(store: AssetDetailsDomain.makePreviewStore(state: state))
+    }
+}

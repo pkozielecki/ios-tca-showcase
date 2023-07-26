@@ -31,8 +31,8 @@ struct HomeView<Router: SwiftUINavigationRouter>: View {
                 .navigationDestination(for: NavigationRoute.self) { route in
                     //  Handling app screens, pushed to the navigation stack:
                     switch route {
-                    case let .editAsset(id):
-                        makeEditAssetView(id: id)
+                    case .editAsset:
+                        makeEditAssetView()
                     case .assetDetails:
                         makeAssetDetailsView()
                     }
@@ -79,8 +79,15 @@ private extension HomeView {
         }
     }
 
-    func makeEditAssetView(id: String) -> some View {
-        EmptyView()
+    func makeEditAssetView() -> some View {
+        IfLetStore(
+            store.scope(
+                state: \.editAssetState,
+                action: AssetsListDomain.Feature.Action.editAsset
+            )
+        ) { store in
+            EditAssetView(store: store)
+        }
     }
 
     func makeAssetDetailsView() -> some View {
@@ -110,7 +117,7 @@ private extension HomeView {
             let viewState = AssetsListViewState.loaded([.init(id: "EUR", title: "Euro", color: .primary, value: "1.2"), .init(id: "BTC", title: "Bitcoin", color: .primary, value: "28872")], "2023-05-10 12:30:12")
             let state = AssetsListDomain.Feature.State(viewState: viewState)
             HomeView(
-                store: AssetsListDomain.makeAssetsListPreviewStore(state: state),
+                store: AssetsListDomain.makePreviewStore(state: state),
                 router: PreviewSwiftUINavigationRouter()
             )
         }
