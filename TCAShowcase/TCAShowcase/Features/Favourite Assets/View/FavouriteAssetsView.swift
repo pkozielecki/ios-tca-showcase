@@ -1,16 +1,16 @@
 //
-//  AddAssetView.swift
+//  FavouriteAssetsView.swift
 //  TCA Showcase
 //
 
 import ComposableArchitecture
 import SwiftUI
 
-struct AddAssetView: View {
-    let store: Store<AddAssetDomain.State, AddAssetDomain.Action>
-    @ObservedObject var viewStore: ViewStore<AddAssetDomain.State, AddAssetDomain.Action>
+struct FavouriteAssetsView: View {
+    let store: StoreOf<FavouriteAssetsDomain.Feature>
+    @ObservedObject var viewStore: ViewStoreOf<FavouriteAssetsDomain.Feature>
 
-    init(store: Store<AddAssetDomain.State, AddAssetDomain.Action>) {
+    init(store: StoreOf<FavouriteAssetsDomain.Feature>) {
         self.store = store
         viewStore = ViewStore(store)
     }
@@ -75,7 +75,7 @@ struct AddAssetView: View {
     }
 }
 
-private extension AddAssetView {
+private extension FavouriteAssetsView {
 
     var selectedAssetsCount: Int {
         viewStore.state.selectedAssetsIDs.count
@@ -112,7 +112,7 @@ private extension AddAssetView {
 }
 
 #if DEBUG
-    struct AddAssetView_Previews: PreviewProvider {
+    struct FavouriteAssetsView_Previews: PreviewProvider {
         static var previews: some View {
             //  let viewState = AddAssetViewState.loading
             //  let viewState = AddAssetViewState.noAssets
@@ -121,18 +121,9 @@ private extension AddAssetView {
                 AssetCellView.Data(id: "Ag", title: "Silver", isSelected: true)
             ])
 
-            var state = AddAssetDomain.State()
+            var state = FavouriteAssetsDomain.Feature.State()
             state.viewState = viewState
-            let store = Store(
-                initialState: state,
-                reducer: AddAssetDomain.reducer,
-                environment: AddAssetDomain.Environment(
-                    fetchAssets: { [] },
-                    fetchFavouriteAssetsIDs: { [] },
-                    goBack: {}
-                )
-            )
-            return AddAssetView(store: store)
+            return FavouriteAssetsView(store: FavouriteAssetsDomain.makeFavouriteAssetsPreviewStore(state: state))
         }
     }
 #endif

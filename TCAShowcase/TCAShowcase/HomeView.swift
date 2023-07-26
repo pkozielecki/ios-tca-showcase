@@ -6,9 +6,16 @@
 import ComposableArchitecture
 import SwiftUI
 
-struct HomeView<Router: SwiftUINavigationRouter, MainStore: Store<AssetsListDomain.State, AssetsListDomain.Action>>: View {
-    let store: MainStore
+struct HomeView<Router: SwiftUINavigationRouter>: View {
+    let store: StoreOf<AssetsListDomain.Feature>
+    @ObservedObject var viewStore: ViewStoreOf<AssetsListDomain.Feature>
     @ObservedObject var router: Router
+
+    init(store: StoreOf<AssetsListDomain.Feature>, router: Router) {
+        self.store = store
+        self.router = router
+        viewStore = ViewStore(store)
+    }
 
     var body: some View {
         NavigationStack(
@@ -26,10 +33,8 @@ struct HomeView<Router: SwiftUINavigationRouter, MainStore: Store<AssetsListDoma
                     switch route {
                     case let .editAsset(id):
                         makeEditAssetView(id: id)
-                    case let .assetDetails(id):
-                        makeAssetDetailsView(id: id)
-                    case .addAsset:
-                        makeAddAssetView()
+                    case .assetDetails:
+                        makeAssetDetailsView()
                     }
                 }
                 .sheet(item: $router.presentedPopup) { _ in
@@ -39,7 +44,7 @@ struct HomeView<Router: SwiftUINavigationRouter, MainStore: Store<AssetsListDoma
                         case .appInfo:
                             makeAppInfoView()
                         case .addAsset:
-                            makeAddAssetView()
+                            makeManageFavouriteAssetsView()
                         }
                     }
                 }
@@ -59,55 +64,55 @@ struct HomeView<Router: SwiftUINavigationRouter, MainStore: Store<AssetsListDoma
 
 private extension HomeView {
 
-    func makeAddAssetView() -> some View {
-        let store = store.scope(
-            state: \.addAssetState,
-            action: AssetsListDomain.Action.addAssetsToFavourites
-        )
-        return AddAssetView(store: store)
+    var dependenciesProvider: DependenciesProvider {
+        DependenciesProvider.shared
+    }
+
+    func makeManageFavouriteAssetsView() -> some View {
+        IfLetStore(
+            store.scope(
+                state: \.manageFavouriteAssetsState,
+                action: AssetsListDomain.Feature.Action.addAssetsToFavourites
+            )
+        ) { store in
+            FavouriteAssetsView(store: store)
+        }
     }
 
     func makeEditAssetView(id: String) -> some View {
         EmptyView()
     }
 
-    func makeAssetDetailsView(id: String) -> some View {
-        EmptyView()
+    func makeAssetDetailsView() -> some View {
+        IfLetStore(
+            store.scope(
+                state: \.assetDetailsState,
+                action: AssetsListDomain.Feature.Action.assetDetails
+            )
+        ) { store in
+            AssetDetailsView(store: store)
+        }
     }
 
     func makeAppInfoView() -> some View {
-        let dependenciesProvider = DependenciesProvider.shared
-        let store = Store(
-            initialState: AppInfoDomain.State(),
-            reducer: AppInfoDomain.reducer,
-            environment: AppInfoDomain.Environment(
-                fetchLatestAppVersion: { await dependenciesProvider.availableAppVersionProvider.fetchLatestAppStoreVersion() },
-                currentAppVersion: { dependenciesProvider.appVersionProvider.currentAppVersion },
-                openAppStore: {
-                    if dependenciesProvider.urlOpener.canOpenURL(AppConfiguration.appstoreURL) {
-                        dependenciesProvider.urlOpener.open(AppConfiguration.appstoreURL)
-                    }
-                },
-                goBack: { dependenciesProvider.router.presentedPopup = nil }
-            )
-        )
+        let store = Store(initialState: AppInfoDomain.Feature.State()) {
+            AppInfoDomain.Feature.makeDefault()
+        }
         return AppInfoView(store: store)
     }
 }
 
 #if DEBUG
-    struct SwiftUIRouterHomeView_Previews: PreviewProvider {
+    struct HomeView_Previews: PreviewProvider {
         static var previews: some View {
-            //  let state = AssetsListViewState.noFavouriteAssets
-            //  let state = AssetsListViewState.loading([.init(id: "EUR", title: "Euro", value: nil), .init(id: "BTC", title: "Bitcoin", value: nil)])
-            let state = AssetsListViewState.loaded([.init(id: "EUR", title: "Euro", color: .primary, value: "1.2"), .init(id: "BTC", title: "Bitcoin", color: .primary, value: "28872")], "2023-05-10 12:30:12")
-
-            let store = Store(
-                initialState: AssetsListDomain.State(viewState: state),
-                reducer: AssetsListDomain.reducer,
-                environment: AssetsListDomain.Environment.previewEnvironment
+            //  let viewState = AssetsListViewState.noFavouriteAssets
+            //  let viewState = AssetsListViewState.loading([.init(id: "EUR", title: "Euro", value: nil), .init(id: "BTC", title: "Bitcoin", value: nil)])
+            let viewState = AssetsListViewState.loaded([.init(id: "EUR", title: "Euro", color: .primary, value: "1.2"), .init(id: "BTC", title: "Bitcoin", color: .primary, value: "28872")], "2023-05-10 12:30:12")
+            let state = AssetsListDomain.Feature.State(viewState: viewState)
+            HomeView(
+                store: AssetsListDomain.makeAssetsListPreviewStore(state: state),
+                router: PreviewSwiftUINavigationRouter()
             )
-            HomeView(store: store, router: PreviewSwiftUINavigationRouter())
         }
     }
 #endif

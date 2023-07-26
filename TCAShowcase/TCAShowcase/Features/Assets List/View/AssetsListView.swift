@@ -7,10 +7,10 @@ import ComposableArchitecture
 import SwiftUI
 
 struct AssetsListView: View {
-    let store: Store<AssetsListDomain.State, AssetsListDomain.Action>
-    @ObservedObject var viewStore: ViewStore<AssetsListDomain.State, AssetsListDomain.Action>
+    let store: Store<AssetsListDomain.Feature.State, AssetsListDomain.Feature.Action>
+    @ObservedObject var viewStore: ViewStore<AssetsListDomain.Feature.State, AssetsListDomain.Feature.Action>
 
-    init(store: Store<AssetsListDomain.State, AssetsListDomain.Action>) {
+    init(store: Store<AssetsListDomain.Feature.State, AssetsListDomain.Feature.Action>) {
         self.store = store
         viewStore = ViewStore(store)
     }
@@ -61,8 +61,8 @@ struct AssetsListView: View {
                         ForEach(assets) { data in
                             FavouriteAssetCellView(
                                 data: data,
-                                onSelectTapped: { viewStore.send(.assetTapped(id: $0)) },
-                                onEditTapped: { print("Edit tapped: \($0)") },
+                                onSelectTapped: { viewStore.send(.assetDetailsTapped(assetData: AssetDetailsViewData(id: $0, name: $1))) },
+                                onEditTapped: { viewStore.send(.editAssetTapped(id: $0)) },
                                 onDeleteTapped: { viewStore.send(.deleteAssetRequested(id: $0)) }
                             )
                             .noInsetsCell()
@@ -112,12 +112,11 @@ private extension AssetsListView {
 #if DEBUG
     struct AssetsListView_Previews: PreviewProvider {
         static var previews: some View {
-            let store = Store(
-                initialState: AssetsListDomain.State(),
-                reducer: AssetsListDomain.reducer,
-                environment: AssetsListDomain.Environment.previewEnvironment
-            )
-            AssetsListView(store: store)
+            //  let viewState = AssetsListViewState.noFavouriteAssets
+            //  let viewState = AssetsListViewState.loading([.init(id: "EUR", title: "Euro", value: nil), .init(id: "BTC", title: "Bitcoin", value: nil)])
+            let viewState = AssetsListViewState.loaded([.init(id: "EUR", title: "Euro", color: .primary, value: "1.2"), .init(id: "BTC", title: "Bitcoin", color: .primary, value: "28872")], "2023-05-10 12:30:12")
+            let state = AssetsListDomain.Feature.State(viewState: viewState)
+            AssetsListView(store: AssetsListDomain.makeAssetsListPreviewStore(state: state))
         }
     }
 #endif

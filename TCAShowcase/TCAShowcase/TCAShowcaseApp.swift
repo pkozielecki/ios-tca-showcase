@@ -11,11 +11,10 @@ struct TCAShowcaseApp: App {
     let router = DependenciesProvider.shared.router
 
     var body: some Scene {
-        let store = Store(
-            initialState: AssetsListDomain.State(),
-            reducer: AssetsListDomain.reducer,
-            environment: AssetsListDomain.Environment(
+        let store = Store(initialState: AssetsListDomain.Feature.State()) {
+            AssetsListDomain.Feature(
                 showPopup: { router.presentedPopup = $0 },
+                push: { router.push(route: $0) },
                 showAlert: { router.presentedAlert = $0 },
                 setFavouriteAssets: { assets in
                     DependenciesProvider.shared.favouriteAssetsManager.store(favouriteAssets: assets)
@@ -30,7 +29,7 @@ struct TCAShowcaseApp: App {
                     DateFormatter.fullDateFormatter.string(from: date ?? Date())
                 }
             )
-        )
+        }
         WindowGroup {
             HomeView(store: store, router: router)
         }
@@ -49,6 +48,10 @@ final class DependenciesProvider {
     private(set) lazy var favouriteAssetsManager = DefaultFavouriteAssetsManager()
     private(set) lazy var assetsPerformanceProvider = DefaultAssetsRatesProvider(
         favouriteAssetsProvider: favouriteAssetsManager,
+        networkModule: networkingModule,
+        baseAssetProvider: baseAssetManager
+    )
+    private(set) lazy var assetsHistoricalDataProvider = DefaultHistoricalAssetRatesProvider(
         networkModule: networkingModule,
         baseAssetProvider: baseAssetManager
     )
