@@ -1,5 +1,5 @@
 //
-//  SwiftUINavigationRouter.swift
+//  NavigationRouter.swift
 //  TCA Showcase
 //
 
@@ -9,7 +9,7 @@ import SwiftUI
 /// An abstraction describing a navigation router.
 /// It acts similarly to UINavigationController, allowing to push, present, pop and dismiss app views.
 /// Requires a bound View able to produce the views to display e.g. `HomeView`
-protocol SwiftUINavigationRouter: AnyObject, ObservableObject {
+protocol NavigationRouter: ObservableObject {
 
     /// A currently presented popup.
     var presentedPopup: PopupRoute? { get set }
@@ -62,7 +62,7 @@ protocol SwiftUINavigationRouter: AnyObject, ObservableObject {
 }
 
 /// A default implementation of NavigationRouter.
-final class DefaultSwiftUINavigationRouter: SwiftUINavigationRouter {
+final class DefaultNavigationRouter: NavigationRouter {
     @Published var presentedPopup: PopupRoute? = nil
     var presentedPopupPublished: Published<PopupRoute?> { _presentedPopup }
     var presentedPopupPublisher: Published<PopupRoute?>.Publisher { $presentedPopup }

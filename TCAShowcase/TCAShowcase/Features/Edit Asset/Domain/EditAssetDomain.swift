@@ -16,8 +16,7 @@ enum EditAssetDomain {
             case updateAsset
         }
 
-        // TODO: Try @Dependency approach: https://pointfreeco.github.io/swift-composable-architecture/0.41.0/documentation/composablearchitecture/dependencymanagement/
-        var goBack: () -> Void
+        @Dependency(\.router) var router
 
         func reduce(into state: inout State, action: Action) -> EffectOf<Feature> {
 
@@ -27,7 +26,7 @@ enum EditAssetDomain {
             case let .updateAssetTapped(updatedAssetData):
                 state.editedAssetData = updatedAssetData
                 return EffectTask.task {
-                    goBack()
+                    router.pop()
                     return .updateAsset
                 }
 
@@ -35,14 +34,5 @@ enum EditAssetDomain {
                 return .none
             }
         }
-    }
-}
-
-extension EditAssetDomain.Feature {
-    static func makeDefault() -> EditAssetDomain.Feature {
-        let dependencies = DependenciesProvider.shared
-        return EditAssetDomain.Feature(
-            goBack: { dependencies.router.pop() }
-        )
     }
 }

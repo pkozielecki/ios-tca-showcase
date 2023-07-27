@@ -6,7 +6,7 @@
 import ComposableArchitecture
 import SwiftUI
 
-struct HomeView<Router: SwiftUINavigationRouter>: View {
+struct HomeView<Router: NavigationRouter>: View {
     let store: StoreOf<AssetsListDomain.Feature>
     @ObservedObject var viewStore: ViewStoreOf<AssetsListDomain.Feature>
     @ObservedObject var router: Router
@@ -103,7 +103,7 @@ private extension HomeView {
 
     func makeAppInfoView() -> some View {
         let store = Store(initialState: AppInfoDomain.Feature.State()) {
-            AppInfoDomain.Feature.makeDefault()
+            AppInfoDomain.Feature()
         }
         return AppInfoView(store: store)
     }

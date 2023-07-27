@@ -19,11 +19,10 @@ enum AppInfoDomain {
             case goBackTapped
         }
 
-        // TODO: Try @Dependency approach:
-        var fetchLatestAppVersion: () async -> String
-        var currentAppVersion: () -> String
-        var openAppStore: () -> Void
-        var goBack: () -> Void
+        @Dependency(\.router) var router
+        @Dependency(\.openURL) var openURL
+        @Dependency(\.appVersionProvider) var appVersionProvider
+        @Dependency(\.availableAppVersionProvider) var availableAppVersionProvider
 
         func reduce(into state: inout State, action: Action) -> EffectOf<Feature> {
             switch action {
@@ -31,11 +30,11 @@ enum AppInfoDomain {
             case .fetchLatestAppVersion:
                 state.viewState = .checking
                 return EffectTask.task {
-                    .latestAppVersionRetrieved(await fetchLatestAppVersion())
+                    .latestAppVersionRetrieved(await availableAppVersionProvider.fetchLatestAppStoreVersion())
                 }
 
             case let .latestAppVersionRetrieved(availableVersion):
-                let currentVersion = currentAppVersion()
+                let currentVersion = appVersionProvider.currentAppVersion
                 if currentVersion < availableVersion {
                     state.viewState = .appUpdateAvailable(currentVersion: currentVersion, availableVersion: availableVersion)
                 } else {
@@ -45,32 +44,16 @@ enum AppInfoDomain {
 
             case .goBackTapped:
                 return .fireAndForget {
-                    goBack()
+                    router.dismiss()
                 }
 
             case .updateAppTapped:
                 return .fireAndForget {
-                    goBack()
-                    openAppStore()
+                    router.dismiss()
+                    await openURL.callAsFunction(AppConfiguration.appstoreURL)
                 }
             }
         }
-    }
-}
-
-extension AppInfoDomain.Feature {
-    static func makeDefault() -> AppInfoDomain.Feature {
-        let dependencies = DependenciesProvider.shared
-        return AppInfoDomain.Feature(
-            fetchLatestAppVersion: { await dependencies.availableAppVersionProvider.fetchLatestAppStoreVersion() },
-            currentAppVersion: { dependencies.appVersionProvider.currentAppVersion },
-            openAppStore: {
-                if dependencies.urlOpener.canOpenURL(AppConfiguration.appstoreURL) {
-                    dependencies.urlOpener.open(AppConfiguration.appstoreURL)
-                }
-            },
-            goBack: { dependencies.router.presentedPopup = nil }
-        )
     }
 }
 
