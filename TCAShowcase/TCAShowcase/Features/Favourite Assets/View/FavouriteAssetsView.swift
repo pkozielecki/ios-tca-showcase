@@ -24,9 +24,16 @@ struct FavouriteAssetsView: View {
                     List {
 
                         //  A search bar section:
-                        // TODO: Add and setup Search Bar
-                        // TODO: Add asset filtering
-                        // TODO: Add asset sorting
+                        SwiftUISearchBar(
+                            text: .init(
+                                get: {
+                                    viewStore.searchPhrase
+                                },
+                                set: {
+                                    viewStore.send(.searchPhraseChanged(phrase: $0))
+                                }
+                            )
+                        )
 
                         //  An assets section:
                         Section("Assets:") {

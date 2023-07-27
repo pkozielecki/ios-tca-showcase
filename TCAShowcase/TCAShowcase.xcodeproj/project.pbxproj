@@ -31,6 +31,7 @@
 		1E5F66F4DFEE762BC13C9412 /* AssetPerformance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E5F60C8FE43713F1D7CDBE9 /* AssetPerformance.swift */; };
 		1E5F676098EE608150EC3477 /* AppInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E5F6281CE8D9E04211E28DA /* AppInfoView.swift */; };
 		1E5F6790100BB6C2EC6F2DCF /* AppConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E5F6FC9102E48D719FFCC74 /* AppConfiguration.swift */; };
+		1E5F685821BA3FA4FF209CEB /* SwiftUISearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E5F6ED55988000082C8350C /* SwiftUISearchBar.swift */; };
 		1E5F68DC72DC41972F4ACAF5 /* BaseAssetProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E5F6DA192B5D840E1B40947 /* BaseAssetProvider.swift */; };
 		1E5F690F682A317AD25E4C66 /* AssetsProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E5F6D45997E5734161AAC07 /* AssetsProvider.swift */; };
 		1E5F6966201C35259D1B28BE /* AssetCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E5F69C0DE8997CDBC2A4BC3 /* AssetCellView.swift */; };
@@ -126,6 +127,7 @@
 		1E5F6E676B48ABB2D1656F94 /* FavouriteAssetsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FavouriteAssetsView.swift; sourceTree = "<group>"; };
 		1E5F6E799470E0BFB79D76C6 /* ButtonStyles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ButtonStyles.swift; sourceTree = "<group>"; };
 		1E5F6EB2327E8FF3622B048C /* GetAssetsRatesResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GetAssetsRatesResponse.swift; sourceTree = "<group>"; };
+		1E5F6ED55988000082C8350C /* SwiftUISearchBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftUISearchBar.swift; sourceTree = "<group>"; };
 		1E5F6F5E52C4EE74D6C8F8A9 /* EditAssetView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditAssetView.swift; sourceTree = "<group>"; };
 		1E5F6F79DC8362D7A3CD2DCB /* GetAllAssetsRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GetAllAssetsRequest.swift; sourceTree = "<group>"; };
 		1E5F6FC9102E48D719FFCC74 /* AppConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppConfiguration.swift; sourceTree = "<group>"; };
@@ -284,6 +286,7 @@
 				1E5F6CD792F4BA48B3151096 /* Cells */,
 				1E5F6FD8A4873E877D401D9E /* LoaderView.swift */,
 				1E5F65CE74E38B88BD61D52C /* ChartView.swift */,
+				1E5F6ED55988000082C8350C /* SwiftUISearchBar.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -699,6 +702,7 @@
 				1E5F6980918E7D4B40CE343A /* EditAssetDomain.swift in Sources */,
 				1E5F6AF0DE62B24A8C1F6439 /* EditAssetView.swift in Sources */,
 				1E5F62F7BDE640FF879C346E /* EditedAssetData.swift in Sources */,
+				1E5F685821BA3FA4FF209CEB /* SwiftUISearchBar.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

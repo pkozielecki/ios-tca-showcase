@@ -12,6 +12,8 @@ enum FavouriteAssetsDomain {
             var selectedAssetsIDs: [String]
             var assets: [Asset] = []
             var viewState: AddAssetViewState = .loading
+            var searchPhrase: String = ""
+            let searchLatency: Double = Const.searchDebounceTime
         }
 
         enum Action: Equatable {
@@ -19,6 +21,8 @@ enum FavouriteAssetsDomain {
             case assetsFetched([Asset])
             case selectAsset(id: String)
             case confirmAssetsSelection
+            case searchPhraseChanged(phrase: String)
+            case applySearch
             case cancel
         }
 
@@ -28,30 +32,44 @@ enum FavouriteAssetsDomain {
 
         func reduce(into state: inout State, action: Action) -> EffectOf<Feature> {
             switch action {
-            //  Downloads available assets to visualise them in the list (for user to choose from):
+
+            // MARK: Downloads available assets to visualise them in the list (for user to choose from):
+
             case .fetchAssets:
                 state.viewState = .loading
                 return EffectTask.task {
                     .assetsFetched(await fetchAssets())
                 }
-
             case let .assetsFetched(assets):
-                state.assets = assets
-                let assetsData = assets.toCellData(selectedAssetsIDs: state.selectedAssetsIDs)
-                state.viewState = assets.isEmpty ? .noAssets : .loaded(assetsData)
+                state.assets = assets.sorted { $0.id < $1.id }
+                state.viewState = composeViewState(state: state)
                 return .none
 
-            //  Selects / Deselects an asset:
+            // MARK: Search phrase changed:
+
+            case let .searchPhraseChanged(phrase):
+                state.searchPhrase = phrase
+                return EffectTask.task {
+                    .applySearch
+                }
+                .debounce(id: Const.searchDebounceID, for: .milliseconds(Int(state.searchLatency * 1000)), scheduler: DispatchQueue.main)
+            case .applySearch:
+                state.viewState = composeViewState(state: state)
+                return .none
+
+            // MARK: Selects / Deselects an asset:
+
             case let .selectAsset(id):
                 if !state.selectedAssetsIDs.contains(id) {
                     state.selectedAssetsIDs.append(id)
                 } else {
                     state.selectedAssetsIDs.removeAll { $0 == id }
                 }
-                state.viewState = .loaded(state.assets.toCellData(selectedAssetsIDs: state.selectedAssetsIDs))
+                state.viewState = composeViewState(state: state)
                 return .none
 
-            //  Selected assets are confirmed or user cancelled:
+            // MARK: Selected assets are confirmed or user cancelled:
+
             case .confirmAssetsSelection, .cancel:
                 return .fireAndForget {
                     goBack()
@@ -72,6 +90,25 @@ extension FavouriteAssetsDomain.Feature {
                 dependencies.router.dismiss()
             }
         )
+    }
+}
+
+private extension FavouriteAssetsDomain.Feature {
+    enum Const {
+        static let searchDebounceID = "SearchPhraseDebounce"
+        static let searchDebounceTime = 0.3
+    }
+
+    func composeViewState(state: FavouriteAssetsDomain.Feature.State) -> AddAssetViewState {
+        let searchPhrase = state.searchPhrase.lowercased()
+        var filteredAssets = state.assets
+        if !searchPhrase.isEmpty {
+            filteredAssets = state.assets.filter {
+                $0.name.lowercased().contains(searchPhrase) || $0.id.lowercased().contains(searchPhrase)
+            }
+        }
+        let assetsData = filteredAssets.toCellData(selectedAssetsIDs: state.selectedAssetsIDs)
+        return assetsData.isEmpty && searchPhrase.isEmpty ? .noAssets : .loaded(assetsData)
     }
 }
 
