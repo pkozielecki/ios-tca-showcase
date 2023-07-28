@@ -15,6 +15,7 @@ final class FakeNavigationRouter: NavigationRouter {
 
     private(set) var navigationStack: [NavigationRoute] = []
     private(set) var didDismiss: Bool?
+    private(set) var didPop: Bool?
 
     func set(navigationStack: [NavigationRoute]) {
         self.navigationStack = navigationStack
@@ -35,7 +36,10 @@ extension FakeNavigationRouter {
     }
 
     func push(route: NavigationRoute) {}
-    func pop() {}
+    func pop() {
+        didPop = true
+    }
+
     func popAll() {}
     func show(alert: AlertRoute) {}
     func hideCurrentAlert() {}
