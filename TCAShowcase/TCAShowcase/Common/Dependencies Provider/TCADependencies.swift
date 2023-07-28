@@ -10,6 +10,8 @@ import NgNetworkModuleCore
 
 private enum RouterKey: DependencyKey {
     static let liveValue: any NavigationRouter = DependenciesProvider.shared.router
+    static let previewValue: any NavigationRouter = PreviewSwiftUINavigationRouter()
+    static let testValue: any NavigationRouter = PreviewSwiftUINavigationRouter()
 }
 
 extension DependencyValues {
@@ -49,6 +51,8 @@ extension DependencyValues {
 
 private enum AssetsProviderKey: DependencyKey {
     static let liveValue: AssetsProvider = DefaultAssetsProvider(networkModule: DependenciesProvider.shared.networkingModule)
+    static let previewValue: AssetsProvider = PreviewAssetsProvider()
+    static let testValue: AssetsProvider = PreviewAssetsProvider()
 }
 
 extension DependencyValues {
@@ -62,6 +66,8 @@ extension DependencyValues {
 
 private enum FavouriteAssetsManagerKey: DependencyKey {
     static let liveValue: FavouriteAssetsManager = DependenciesProvider.shared.favouriteAssetsManager
+    static let previewValue: FavouriteAssetsManager = PreviewFavouriteAssetsManager()
+    static let testValue: FavouriteAssetsManager = PreviewFavouriteAssetsManager()
 }
 
 extension DependencyValues {
@@ -75,6 +81,8 @@ extension DependencyValues {
 
 private enum AssetRatesProviderKey: DependencyKey {
     static let liveValue: AssetsRatesProvider = DependenciesProvider.shared.assetsPerformanceProvider
+    static let previewValue: AssetsRatesProvider = PreviewAssetRatesProvider()
+    static let testValue: AssetsRatesProvider = PreviewAssetRatesProvider()
 }
 
 extension DependencyValues {
@@ -88,6 +96,8 @@ extension DependencyValues {
 
 private enum HistoricalAssetRatesProviderKey: DependencyKey {
     static let liveValue: HistoricalAssetRatesProvider = DependenciesProvider.shared.assetsHistoricalDataProvider
+    static let previewValue: HistoricalAssetRatesProvider = PreviewHistoricalAssetRatesProvider()
+    static let testValue: HistoricalAssetRatesProvider = PreviewHistoricalAssetRatesProvider()
 }
 
 extension DependencyValues {
@@ -101,6 +111,8 @@ extension DependencyValues {
 
 private enum AppVersionProviderKey: DependencyKey {
     static let liveValue: any AppVersionProvider = DependenciesProvider.shared.appVersionProvider
+    static let previewValue: AppVersionProvider = PreviewAppVersionProvider()
+    static let testValue: AppVersionProvider = PreviewAppVersionProvider()
 }
 
 extension DependencyValues {
@@ -114,6 +126,8 @@ extension DependencyValues {
 
 private enum AvailableAppVersionProviderKey: DependencyKey {
     static let liveValue: any AvailableAppVersionProvider = DependenciesProvider.shared.availableAppVersionProvider
+    static let previewValue: AvailableAppVersionProvider = PreviewAvailableAppVersionProvider()
+    static let testValue: AvailableAppVersionProvider = PreviewAvailableAppVersionProvider()
 }
 
 extension DependencyValues {
