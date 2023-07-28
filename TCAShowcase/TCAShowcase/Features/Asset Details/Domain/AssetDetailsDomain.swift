@@ -20,8 +20,7 @@ enum AssetDetailsDomain {
             case assetSelectedForEdition(String)
         }
 
-        // TODO: Try @Dependency approach:
-        var fetchAssetPerformance: (String, ChartView.Scope) async -> [AssetHistoricalRate]
+        @Dependency(\.historicalAssetRatesProvider) var historicalAssetRatesProvider
 
         func reduce(into state: inout State, action: Action) -> EffectTask<Action> {
             switch action {
@@ -29,7 +28,7 @@ enum AssetDetailsDomain {
             case let .fetchAssetHistoricalPerformance(scope):
                 let assetID = state.asset.id
                 return EffectTask.task {
-                    let rates = await fetchAssetPerformance(assetID, scope)
+                    let rates = await historicalAssetRatesProvider.getHistoricalRates(for: assetID, range: scope)
                     let data = rates.map {
                         ChartView.ChartPoint(label: $0.date, value: $0.value)
                     }
@@ -50,17 +49,6 @@ enum AssetDetailsDomain {
                 return .none
             }
         }
-    }
-}
-
-extension AssetDetailsDomain.Feature {
-    static func makeDefault() -> AssetDetailsDomain.Feature {
-        let dependencies = DependenciesProvider.shared
-        return AssetDetailsDomain.Feature(
-            fetchAssetPerformance: { assetID, scope in
-                await dependencies.assetsHistoricalDataProvider.getHistoricalRates(for: assetID, range: scope)
-            }
-        )
     }
 }
 

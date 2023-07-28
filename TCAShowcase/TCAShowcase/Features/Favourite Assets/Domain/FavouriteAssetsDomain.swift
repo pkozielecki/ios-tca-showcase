@@ -26,9 +26,8 @@ enum FavouriteAssetsDomain {
             case cancel
         }
 
-        // TODO: Try @Dependency approach: https://pointfreeco.github.io/swift-composable-architecture/0.41.0/documentation/composablearchitecture/dependencymanagement/
-        var fetchAssets: () async -> [Asset]
-        var goBack: () -> Void
+        @Dependency(\.assetsProvider) var assetsProvider
+        @Dependency(\.router) var router
 
         func reduce(into state: inout State, action: Action) -> EffectOf<Feature> {
             switch action {
@@ -38,7 +37,7 @@ enum FavouriteAssetsDomain {
             case .fetchAssets:
                 state.viewState = .loading
                 return EffectTask.task {
-                    .assetsFetched(await fetchAssets())
+                    .assetsFetched(await assetsProvider.fetchAssets())
                 }
             case let .assetsFetched(assets):
                 state.assets = assets.sorted { $0.id < $1.id }
@@ -72,24 +71,10 @@ enum FavouriteAssetsDomain {
 
             case .confirmAssetsSelection, .cancel:
                 return .fireAndForget {
-                    goBack()
+                    router.presentedPopup = nil
                 }
             }
         }
-    }
-}
-
-extension FavouriteAssetsDomain.Feature {
-    static func makeDefault() -> FavouriteAssetsDomain.Feature {
-        let dependencies = DependenciesProvider.shared
-        return FavouriteAssetsDomain.Feature(
-            fetchAssets: {
-                await dependencies.assetsProvider.fetchAssets()
-            },
-            goBack: {
-                dependencies.router.dismiss()
-            }
-        )
     }
 }
 

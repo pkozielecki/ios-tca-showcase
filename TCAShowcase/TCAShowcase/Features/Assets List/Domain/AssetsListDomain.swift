@@ -42,26 +42,20 @@ enum AssetsListDomain {
             case deleteAssetConfirmed(id: String)
         }
 
-        // TODO: Try @Dependency approach: https://pointfreeco.github.io/swift-composable-architecture/0.41.0/documentation/composablearchitecture/dependencymanagement/
-        var showPopup: (_ route: PopupRoute) -> Void
-        var push: (_ route: NavigationRoute) -> Void
-        var showAlert: (_ route: AlertRoute) -> Void
-        var setFavouriteAssets: (_ assets: [Asset]) async -> Void
-        var updateFavouriteAssetWith: (_ asset: EditedAssetData) async -> Void
-        var fetchFavouriteAssets: () -> [Asset]
-        var fetchAssetsPerformance: () async -> [AssetPerformance]
-        var formatLastUpdatedDate: (_ date: Date?) -> String
+        @Dependency(\.router) var router
+        @Dependency(\.favouriteAssetsManager) var favouriteAssetsManager
+        @Dependency(\.assetRatesProvider) var assetsRatesProvider
 
         var body: some ReducerProtocol<State, Action> {
             Reduce(core)
                 .ifLet(\.manageFavouriteAssetsState, action: /Action.addAssetsToFavourites) {
-                    FavouriteAssetsDomain.Feature.makeDefault()
+                    FavouriteAssetsDomain.Feature()
                 }
                 .ifLet(\.editAssetState, action: /Action.editAsset) {
-                    EditAssetDomain.Feature.makeDefault()
+                    EditAssetDomain.Feature()
                 }
                 .ifLet(\.assetDetailsState, action: /Action.assetDetails) {
-                    AssetDetailsDomain.Feature.makeDefault()
+                    AssetDetailsDomain.Feature()
                 }
         }
 
@@ -71,10 +65,10 @@ enum AssetsListDomain {
                 // MARK: Assets list:
 
             case .loadAssetsPerformanceRequested:
-                state.favouriteAssets = fetchFavouriteAssets()
+                state.favouriteAssets = favouriteAssetsManager.retrieveFavouriteAssets()
                 state.viewState = .loading(state.favouriteAssets.map { FavouriteAssetCellView.Data(asset: $0) })
                 return EffectTask.task {
-                    let performance = await fetchAssetsPerformance()
+                    let performance = await assetsRatesProvider.getAssetRates()
                     return .loadAssetsPerformanceLoaded(performance)
                 }
 
@@ -85,7 +79,7 @@ enum AssetsListDomain {
                     let formattedValue = rate?.price?.formattedPrice
                     return FavouriteAssetCellView.Data(asset: favouriteAsset, formattedValue: formattedValue)
                 }
-                let lastUpdated = formatLastUpdatedDate(rates.first?.price?.date)
+                let lastUpdated = DateFormatter.fullDateFormatter.string(from: rates.first?.price?.date ?? Date())
                 state.viewState = .loaded(data, lastUpdated)
                 return .none
 
@@ -95,7 +89,7 @@ enum AssetsListDomain {
                 let selectedAssetsIDs = state.favouriteAssets.map(\.id)
                 state.manageFavouriteAssetsState = FavouriteAssetsDomain.Feature.State(selectedAssetsIDs: selectedAssetsIDs)
                 return .fireAndForget {
-                    showPopup(.addAsset)
+                    router.presentedPopup = .addAsset
                 }
 
             case .addAssetsToFavourites(.confirmAssetsSelection):
@@ -108,7 +102,7 @@ enum AssetsListDomain {
                 state.manageFavouriteAssetsState = nil
 
                 return EffectTask.task {
-                    await setFavouriteAssets(updatedFavouriteAssets)
+                    favouriteAssetsManager.store(favouriteAssets: updatedFavouriteAssets)
                     return .loadAssetsPerformanceRequested
                 }
 
@@ -118,14 +112,14 @@ enum AssetsListDomain {
                 let asset = state.favouriteAssets.first { $0.id == id }
                 let assetName = asset?.name ?? ""
                 return .fireAndForget {
-                    showAlert(.deleteAsset(assetId: id, assetName: assetName))
+                    router.presentedAlert = .deleteAsset(assetId: id, assetName: assetName)
                 }
 
             case let .deleteAssetConfirmed(id):
                 state.favouriteAssets.removeAll { $0.id == id }
                 let assets = state.favouriteAssets
                 return EffectTask.task {
-                    await setFavouriteAssets(assets)
+                    favouriteAssetsManager.store(favouriteAssets: assets)
                     return .loadAssetsPerformanceRequested
                 }
 
@@ -134,7 +128,7 @@ enum AssetsListDomain {
             case let .assetDetailsTapped(asset):
                 state.assetDetailsState = .init(asset: asset)
                 return .fireAndForget {
-                    push(.assetDetails)
+                    router.push(route: .assetDetails)
                 }
 
             case let .assetDetails(.assetSelectedForEdition(assetID)):
@@ -158,7 +152,7 @@ enum AssetsListDomain {
                 )
                 state.editAssetState = .init(editedAssetData: data)
                 return .fireAndForget {
-                    push(.editAsset)
+                    router.push(route: .editAsset)
                 }
 
             case .editAsset(.updateAsset):
@@ -167,7 +161,7 @@ enum AssetsListDomain {
                 }
                 state.editAssetState = nil
                 return EffectTask.task {
-                    await updateFavouriteAssetWith(updatedAsset)
+                    favouriteAssetsManager.update(asset: updatedAsset)
                     return .loadAssetsPerformanceRequested
                 }
 
@@ -175,7 +169,7 @@ enum AssetsListDomain {
 
             case .appInfoTapped:
                 return .fireAndForget {
-                    showPopup(.appInfo)
+                    router.presentedPopup = .appInfo
                 }
 
             default:
