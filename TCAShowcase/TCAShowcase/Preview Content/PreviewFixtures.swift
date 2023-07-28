@@ -62,9 +62,6 @@ import SwiftUI
         static func makePreviewStore(state: AssetsListDomain.Feature.State) -> Store<AssetsListDomain.Feature.State, AssetsListDomain.Feature.Action> {
             Store(initialState: state) {
                 AssetsListDomain.Feature()
-                    .dependency(\.router, PreviewSwiftUINavigationRouter())
-                    .dependency(\.favouriteAssetsManager, PreviewFavouriteAssetsManager())
-                    .dependency(\.assetsProvider, PreviewAssetsProvider())
             }
         }
     }
@@ -73,8 +70,6 @@ import SwiftUI
         static func makePreviewStore(state: FavouriteAssetsDomain.Feature.State) -> Store<FavouriteAssetsDomain.Feature.State, FavouriteAssetsDomain.Feature.Action> {
             Store(initialState: state) {
                 FavouriteAssetsDomain.Feature()
-                    .dependency(\.router, PreviewSwiftUINavigationRouter())
-                    .dependency(\.assetsProvider, PreviewAssetsProvider())
             }
         }
     }
@@ -83,9 +78,6 @@ import SwiftUI
         static func makePreviewStore(state: AppInfoDomain.Feature.State) -> Store<AppInfoDomain.Feature.State, AppInfoDomain.Feature.Action> {
             Store(initialState: state) {
                 AppInfoDomain.Feature()
-                    .dependency(\.router, PreviewSwiftUINavigationRouter())
-                    .dependency(\.appVersionProvider, PreviewAppVersionProvider())
-                    .dependency(\.availableAppVersionProvider, PreviewAvailableAppVersionProvider())
             }
         }
     }
@@ -94,7 +86,6 @@ import SwiftUI
         static func makePreviewStore(state: AssetDetailsDomain.Feature.State) -> Store<AssetDetailsDomain.Feature.State, AssetDetailsDomain.Feature.Action> {
             Store(initialState: state) {
                 AssetDetailsDomain.Feature()
-                    .dependency(\.historicalAssetRatesProvider, PreviewHistoricalAssetRatesProvider())
             }
         }
     }
@@ -103,7 +94,6 @@ import SwiftUI
         static func makePreviewStore(state: EditAssetDomain.Feature.State) -> Store<EditAssetDomain.Feature.State, EditAssetDomain.Feature.Action> {
             Store(initialState: state) {
                 EditAssetDomain.Feature()
-                    .dependency(\.router, PreviewSwiftUINavigationRouter())
             }
         }
     }

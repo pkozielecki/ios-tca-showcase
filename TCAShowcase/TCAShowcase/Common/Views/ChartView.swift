@@ -30,18 +30,18 @@ extension ChartView {
     /// A helper structure describing a point on a chart.
     struct ChartPoint: Identifiable, Equatable {
 
-        /// A point unique ID.
-        var id = UUID()
-
         /// A point label on X axis.
         let label: String
 
         /// A point value.
         let value: Double
+
+        /// - SeeAlso: Identifiable.id
+        var id: String { "\(label)|\(value)" }
     }
 
     /// A helper enumeration describing a chart time scopes.
-    enum Scope: String, CaseIterable {
+    enum Scope: String, CaseIterable, Equatable {
         case week, month, quarter, year
     }
 }
