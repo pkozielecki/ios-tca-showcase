@@ -13,7 +13,6 @@ enum FavouriteAssetsDomain {
             var assets: [Asset] = []
             var viewState: AddAssetViewState = .loading
             var searchPhrase: String = ""
-            let searchLatency: Double = Const.searchDebounceTime
         }
 
         enum Action: Equatable {
@@ -28,6 +27,7 @@ enum FavouriteAssetsDomain {
 
         @Dependency(\.assetsProvider) var assetsProvider
         @Dependency(\.router) var router
+        @Dependency(\.mainQueue) var mainQueue
 
         func reduce(into state: inout State, action: Action) -> EffectOf<Feature> {
             switch action {
@@ -51,7 +51,7 @@ enum FavouriteAssetsDomain {
                 return EffectTask.task {
                     .applySearch
                 }
-                .debounce(id: Const.searchDebounceID, for: .milliseconds(Int(state.searchLatency * 1000)), scheduler: DispatchQueue.main)
+                .debounce(id: Const.searchDebounceID, for: .milliseconds(Const.searchDebounceTime), scheduler: mainQueue)
             case .applySearch:
                 state.viewState = composeViewState(state: state)
                 return .none
@@ -71,7 +71,7 @@ enum FavouriteAssetsDomain {
 
             case .confirmAssetsSelection, .cancel:
                 return .fireAndForget {
-                    router.presentedPopup = nil
+                    router.dismiss()
                 }
             }
         }
@@ -81,7 +81,7 @@ enum FavouriteAssetsDomain {
 private extension FavouriteAssetsDomain.Feature {
     enum Const {
         static let searchDebounceID = "SearchPhraseDebounce"
-        static let searchDebounceTime = 0.3
+        static let searchDebounceTime = 300
     }
 
     func composeViewState(state: FavouriteAssetsDomain.Feature.State) -> AddAssetViewState {
