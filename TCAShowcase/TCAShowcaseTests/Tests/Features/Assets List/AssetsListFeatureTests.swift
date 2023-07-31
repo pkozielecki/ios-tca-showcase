@@ -75,7 +75,9 @@ class AssetsListFeatureTests: XCTestCase {
             $0.viewState = .loaded([
                 .init(id: "AU", title: "Gold", color: .primary, value: "0.05 USD"),
                 .init(id: "AG", title: "Silver", color: .primary, value: nil)
-            ], "2023-07-31 05:59:51")
+            ],
+            DateFormatter.fullDateFormatter.string(from: fixtureDate)
+            )
         }
     }
 
