@@ -39,6 +39,6 @@ class EditAssetFeatureTests: XCTestCase {
         await sut.receive(.updateAsset)
 
         //  then - other interactions:
-        XCTAssertEqual(fakeRouter.didPop, true, "Should pop the view")
+        XCTAssertEqual(fakeRouter.didPopAll, true, "Should pop to the root")
     }
 }
