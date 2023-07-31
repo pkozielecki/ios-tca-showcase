@@ -71,12 +71,12 @@ struct AssetsListView: View {
                 }
                 .navigationTitle("Assets list")
                 .refreshable {
-                    viewStore.send(.loadAssetsPerformanceRequested)
+                    viewStore.send(.assetsPerformanceRequested)
                 }
             }
         }
         .onAppear {
-            viewStore.send(.loadAssetsPerformanceRequested)
+            viewStore.send(.assetsPerformanceRequested)
         }
     }
 }

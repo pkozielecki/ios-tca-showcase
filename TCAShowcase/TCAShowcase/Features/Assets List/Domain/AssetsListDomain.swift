@@ -21,7 +21,7 @@ enum AssetsListDomain {
 
         enum Action: Equatable {
             /// Assets list:
-            case loadAssetsPerformanceRequested
+            case assetsPerformanceRequested
             case loadAssetsPerformanceLoaded([AssetPerformance])
 
             /// Selecting an asset:
@@ -64,7 +64,7 @@ enum AssetsListDomain {
 
                 // MARK: Assets list:
 
-            case .loadAssetsPerformanceRequested:
+            case .assetsPerformanceRequested:
                 state.favouriteAssets = favouriteAssetsManager.retrieveFavouriteAssets()
                 state.viewState = .loading(state.favouriteAssets.map { FavouriteAssetCellView.Data(asset: $0) })
                 return EffectTask.task {
@@ -103,7 +103,7 @@ enum AssetsListDomain {
 
                 return EffectTask.task {
                     favouriteAssetsManager.store(favouriteAssets: updatedFavouriteAssets)
-                    return .loadAssetsPerformanceRequested
+                    return .assetsPerformanceRequested
                 }
 
                 // MARK: Removing an asset:
@@ -120,7 +120,7 @@ enum AssetsListDomain {
                 let assets = state.favouriteAssets
                 return EffectTask.task {
                     favouriteAssetsManager.store(favouriteAssets: assets)
-                    return .loadAssetsPerformanceRequested
+                    return .assetsPerformanceRequested
                 }
 
                 // MARK: Asset details:
@@ -132,6 +132,7 @@ enum AssetsListDomain {
                 }
 
             case let .assetDetails(.assetSelectedForEdition(assetID)):
+                state.assetDetailsState = nil
                 return EffectTask.task {
                     .editAssetTapped(id: assetID)
                 }
@@ -139,9 +140,7 @@ enum AssetsListDomain {
                 // MARK: Editing asset:
 
             case let .editAssetTapped(id):
-                guard let asset = state.favouriteAssets.first(where: {
-                    $0.id == id
-                }) else {
+                guard let asset = state.favouriteAssets.first(where: { $0.id == id }) else {
                     return .none
                 }
 
@@ -162,7 +161,7 @@ enum AssetsListDomain {
                 state.editAssetState = nil
                 return EffectTask.task {
                     favouriteAssetsManager.update(asset: updatedAsset)
-                    return .loadAssetsPerformanceRequested
+                    return .assetsPerformanceRequested
                 }
 
                 // MARK: App info:
