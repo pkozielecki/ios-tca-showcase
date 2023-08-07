@@ -26,7 +26,7 @@ enum EditAssetDomain {
             case let .updateAssetTapped(updatedAssetData):
                 state.editedAssetData = updatedAssetData
                 return EffectTask.task {
-                    router.pop()
+                    router.popAll()
                     return .updateAsset
                 }
 
