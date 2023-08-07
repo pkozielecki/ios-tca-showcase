@@ -123,7 +123,7 @@ private extension FavouriteAssetsView {
         static var previews: some View {
             //  let viewState = AddAssetViewState.loading
             //  let viewState = AddAssetViewState.noAssets
-            let viewState = AddAssetViewState.loaded([
+            let viewState = FavouriteAssetsViewState.loaded([
                 AssetCellView.Data(id: "Au", title: "Gold", isSelected: false),
                 AssetCellView.Data(id: "Ag", title: "Silver", isSelected: true)
             ])

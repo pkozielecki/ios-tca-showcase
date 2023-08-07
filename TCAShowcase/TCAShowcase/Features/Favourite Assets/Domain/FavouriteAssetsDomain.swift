@@ -11,7 +11,7 @@ enum FavouriteAssetsDomain {
         struct State: Equatable {
             var selectedAssetsIDs: [String]
             var assets: [Asset] = []
-            var viewState: AddAssetViewState = .loading
+            var viewState: FavouriteAssetsViewState = .loading
             var searchPhrase: String = ""
         }
 
@@ -84,7 +84,7 @@ private extension FavouriteAssetsDomain.Feature {
         static let searchDebounceTime = 300
     }
 
-    func composeViewState(state: FavouriteAssetsDomain.Feature.State) -> AddAssetViewState {
+    func composeViewState(state: FavouriteAssetsDomain.Feature.State) -> FavouriteAssetsViewState {
         let searchPhrase = state.searchPhrase.lowercased()
         var filteredAssets = state.assets
         if !searchPhrase.isEmpty {
@@ -106,7 +106,7 @@ extension Array where Element == Asset {
     }
 }
 
-enum AddAssetViewState: Equatable {
+enum FavouriteAssetsViewState: Equatable {
     case loading
     case loaded([AssetCellView.Data])
     case noAssets
