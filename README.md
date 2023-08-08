@@ -14,8 +14,8 @@ Welcome to the demonstration of **Total Composable Architecture** in a **SwiftUI
 * https://metalpriceapi.com/ API used as an asset prices provider.
 * Uses **SwiftUIRouter** component for navigation.
 
-| ![](External Resources/favourite-assets.gif) | ![](External Resources/update-app.gif) | ![](External Resources/edit.gif) |
-|----------------------------------------|-----------------------------------------------|-------------------------------------|
+| ![](External%20Resources/favourite-assets.gif) | ![](External%20Resources/update-app.gif) | ![](External%20Resources/edit.gif) |
+|----------------------------------------|----------------------------------------------|---------------------------------|
 
 
 ## Integration
@@ -42,7 +42,7 @@ Welcome to the demonstration of **Total Composable Architecture** in a **SwiftUI
 
 - [Pawel Kozielecki](https://github.com/pkozielecki)
 
-See also the list of [contributors](https://github.com/netguru/ng-ios-network-module/contributors) who participated in this project.
+See also the list of [contributors](https://github.com/pkozielecki/ios-tca-showcase/graphs/contributors) who participated in this project.
 
 ## License
 
