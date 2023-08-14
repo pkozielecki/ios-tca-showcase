@@ -9,54 +9,6 @@ import Foundation
 import SwiftUI
 
 #if DEBUG
-    final class PreviewSwiftUINavigationRouter: NavigationRouter {
-        @Published var navigationRoute: NavigationRoute?
-        var navigationPathPublished: Published<NavigationRoute?> { _navigationRoute }
-        var navigationPathPublisher: Published<NavigationRoute?>.Publisher { $navigationRoute }
-        private(set) var navigationStack: [NavigationRoute] = []
-        @Published var presentedPopup: PopupRoute?
-        var presentedPopupPublished: Published<PopupRoute?> { _presentedPopup }
-        var presentedPopupPublisher: Published<PopupRoute?>.Publisher { $presentedPopup }
-        @Published var presentedAlert: AlertRoute?
-        var presentedAlertPublished: Published<AlertRoute?> { _presentedAlert }
-        var presentedAlertPublisher: Published<AlertRoute?>.Publisher { $presentedAlert }
-
-        func set(navigationStack: [NavigationRoute]) {}
-        func present(popup: PopupRoute) {}
-        func dismiss() {}
-        func push(route: NavigationRoute) {}
-        func pop() {}
-        func popAll() {}
-        func show(alert: AlertRoute) {}
-        func hideCurrentAlert() {}
-    }
-
-    final class PreviewFavouriteAssetsManager: FavouriteAssetsManager {
-        func retrieveFavouriteAssets() -> [Asset] { [] }
-        func store(favouriteAssets assets: [Asset]) {}
-        func update(asset: EditedAssetData) {}
-        func clear() {}
-    }
-
-    final actor PreviewAssetsProvider: AssetsProvider {
-        func fetchAssets() async -> [Asset] { [] }
-    }
-
-    final actor PreviewAssetRatesProvider: AssetsRatesProvider {
-        func getAssetRates() async -> [AssetPerformance] { [] }
-    }
-
-    final actor PreviewHistoricalAssetRatesProvider: HistoricalAssetRatesProvider {
-        func getHistoricalRates(for assetID: String, range: ChartView.Scope) async -> [AssetHistoricalRate] { [] }
-    }
-
-    final class PreviewAppVersionProvider: AppVersionProvider {
-        var currentAppVersion: String = "1.0.0"
-    }
-
-    final class PreviewAvailableAppVersionProvider: AvailableAppVersionProvider {
-        func fetchLatestAppStoreVersion() async -> String { "1.1.0" }
-    }
 
     extension AssetsListDomain {
         static func makePreviewStore(state: AssetsListDomain.Feature.State) -> Store<AssetsListDomain.Feature.State, AssetsListDomain.Feature.Action> {

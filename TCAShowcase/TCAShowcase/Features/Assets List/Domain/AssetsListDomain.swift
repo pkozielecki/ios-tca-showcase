@@ -198,3 +198,14 @@ enum AssetsListViewState: Equatable {
     case loading([FavouriteAssetCellView.Data])
     case loaded([FavouriteAssetCellView.Data], String)
 }
+
+// extension AssetsListViewState {
+//    var isEmpty: Bool {
+//        switch self {
+//        case .noAssets:
+//            return true
+//        case .loading, .loaded:
+//            return false
+//        }
+//    }
+// }

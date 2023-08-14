@@ -39,6 +39,17 @@
                ReferencedContainer = "container:TCAShowcase.xcodeproj">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "22FFF6EC2A8A3975005C0A9D"
+               BuildableName = "TCAShowcaseCommonTests.xctest"
+               BlueprintName = "TCAShowcaseCommonTests"
+               ReferencedContainer = "container:TCAShowcase.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction

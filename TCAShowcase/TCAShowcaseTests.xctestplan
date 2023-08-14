@@ -15,6 +15,11 @@
           "containerPath" : "container:TCAShowcase.xcodeproj",
           "identifier" : "222E23CE2A5D29AD0082C1DC",
           "name" : "TCAShowcase"
+        },
+        {
+          "containerPath" : "container:TCAShowcase.xcodeproj",
+          "identifier" : "22FFF6E32A8A3974005C0A9D",
+          "name" : "TCAShowcaseCommon"
         }
       ]
     }
@@ -25,6 +30,13 @@
         "containerPath" : "container:TCAShowcase.xcodeproj",
         "identifier" : "222E23DE2A5D29AF0082C1DC",
         "name" : "TCAShowcaseTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:TCAShowcase.xcodeproj",
+        "identifier" : "22FFF6EC2A8A3975005C0A9D",
+        "name" : "TCAShowcaseCommonTests"
       }
     }
   ],
