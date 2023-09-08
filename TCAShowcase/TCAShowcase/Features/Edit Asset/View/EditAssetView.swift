@@ -17,7 +17,7 @@ struct EditAssetView: View {
 
     init(store: Store<EditAssetDomain.Feature.State, EditAssetDomain.Feature.Action>) {
         self.store = store
-        viewStore = ViewStore(store)
+        viewStore = ViewStore(store, observe: { .init(editedAssetData: $0.editedAssetData) })
     }
 
     var body: some View {

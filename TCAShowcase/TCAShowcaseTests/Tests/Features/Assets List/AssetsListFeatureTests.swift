@@ -12,7 +12,7 @@ import XCTest
 
 @MainActor
 class AssetsListFeatureTests: XCTestCase {
-    var sut: TestStore<AssetsListDomain.Feature.State, AssetsListDomain.Feature.Action, AssetsListDomain.Feature.State, AssetsListDomain.Feature.Action, Void>!
+    var sut: TestStore<AssetsListDomain.Feature.State, AssetsListDomain.Feature.Action>!
     var fakeFavouriteAssetsManager: FakeFavouriteAssetsManager!
     var fakeAssetsRatesProvider: FakeAssetsRatesProvider!
     var fakeRouter: FakeNavigationRouter!
@@ -31,10 +31,9 @@ class AssetsListFeatureTests: XCTestCase {
             .init(id: "AG", name: "Silver", colorCode: nil)
         ]
 
-        sut = TestStore(
-            initialState: AssetsListDomain.Feature.State(),
-            reducer: AssetsListDomain.Feature()
-        ) {
+        sut = TestStore(initialState: AssetsListDomain.Feature.State()) {
+            AssetsListDomain.Feature()
+        } withDependencies: {
             $0.favouriteAssetsManager = fakeFavouriteAssetsManager
             $0.assetRatesProvider = fakeAssetsRatesProvider
             $0.router = fakeRouter
@@ -105,6 +104,7 @@ class AssetsListFeatureTests: XCTestCase {
         //  given:
         // Discussion: The only way to manually set the Store's state is to pass it as an initial state:
         let fixtureSelectedAssetsIDs = ["AU", "PLN"]
+
         sut = TestStore(
             initialState: AssetsListDomain.Feature.State(
                 favouriteAssets: fixtureFavouriteAssets,
@@ -116,9 +116,10 @@ class AssetsListFeatureTests: XCTestCase {
                         .init(id: "PLN", name: "Polish Zloty", colorCode: nil)
                     ]
                 )
-            ),
-            reducer: AssetsListDomain.Feature()
+            )
         ) {
+            AssetsListDomain.Feature()
+        } withDependencies: {
             $0.favouriteAssetsManager = fakeFavouriteAssetsManager
             $0.assetRatesProvider = fakeAssetsRatesProvider
             $0.router = fakeRouter
@@ -212,15 +213,17 @@ class AssetsListFeatureTests: XCTestCase {
         //  given:
         // Discussion: The only way to manually set the Store's state is to pass it as an initial state:
         let fixtureUpdatedAssetData = EditedAssetData(id: "AU", name: "My Gold", position: .init(currentPosition: 0, numElements: 2), color: .red)
-        sut = TestStore(
-            initialState: AssetsListDomain.Feature.State(
+
+        sut = TestStore(initialState:
+            AssetsListDomain.Feature.State(
                 favouriteAssets: fixtureFavouriteAssets,
                 editAssetState: .init(
                     editedAssetData: fixtureUpdatedAssetData
                 )
-            ),
-            reducer: AssetsListDomain.Feature()
+            )
         ) {
+            AssetsListDomain.Feature()
+        } withDependencies: {
             $0.favouriteAssetsManager = fakeFavouriteAssetsManager
             $0.assetRatesProvider = fakeAssetsRatesProvider
             $0.router = fakeRouter

@@ -11,17 +11,16 @@ import XCTest
 
 @MainActor
 class EditAssetFeatureTests: XCTestCase {
-    var sut: TestStore<EditAssetDomain.Feature.State, EditAssetDomain.Feature.Action, EditAssetDomain.Feature.State, EditAssetDomain.Feature.Action, Void>!
+    var sut: TestStore<EditAssetDomain.Feature.State, EditAssetDomain.Feature.Action>!
     var fixtureEditedAsset: EditedAssetData!
     var fakeRouter: FakeNavigationRouter!
 
     override func setUp() {
         fixtureEditedAsset = EditedAssetData(id: "AU", name: "Gold", position: .init(currentPosition: 0, numElements: 3), color: .primary)
         fakeRouter = FakeNavigationRouter()
-        sut = TestStore(
-            initialState: EditAssetDomain.Feature.State(editedAssetData: fixtureEditedAsset),
-            reducer: EditAssetDomain.Feature()
-        ) {
+        sut = TestStore(initialState: EditAssetDomain.Feature.State(editedAssetData: fixtureEditedAsset)) {
+            EditAssetDomain.Feature()
+        } withDependencies: {
             $0.router = fakeRouter
         }
     }

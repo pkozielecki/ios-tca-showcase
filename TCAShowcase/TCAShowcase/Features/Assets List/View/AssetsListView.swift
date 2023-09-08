@@ -12,7 +12,7 @@ struct AssetsListView: View {
 
     init(store: Store<AssetsListDomain.Feature.State, AssetsListDomain.Feature.Action>) {
         self.store = store
-        viewStore = ViewStore(store)
+        viewStore = ViewStore(store, observe: { .init(viewState: $0.viewState) })
     }
 
     var body: some View {

@@ -13,7 +13,7 @@ struct AppInfoView: View {
 
     init(store: StoreOf<AppInfoDomain.Feature>) {
         self.store = store
-        viewStore = ViewStore(store)
+        viewStore = ViewStore(store, observe: { .init(viewState: $0.viewState) })
     }
 
     var body: some View {

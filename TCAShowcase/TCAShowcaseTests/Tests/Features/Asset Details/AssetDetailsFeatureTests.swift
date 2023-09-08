@@ -11,17 +11,16 @@ import XCTest
 
 @MainActor
 class AssetDetailsFeatureTests: XCTestCase {
-    var sut: TestStore<AssetDetailsDomain.Feature.State, AssetDetailsDomain.Feature.Action, AssetDetailsDomain.Feature.State, AssetDetailsDomain.Feature.Action, Void>!
+    var sut: TestStore<AssetDetailsDomain.Feature.State, AssetDetailsDomain.Feature.Action>!
     var fixtureAsset: AssetDetailsViewData!
     var fakeHistoricalAssetRatesProvider: FakeHistoricalAssetRatesProvider!
 
     override func setUp() {
         fixtureAsset = AssetDetailsViewData(id: "AU", name: "Gold")
         fakeHistoricalAssetRatesProvider = FakeHistoricalAssetRatesProvider()
-        sut = TestStore(
-            initialState: AssetDetailsDomain.Feature.State(asset: fixtureAsset),
-            reducer: AssetDetailsDomain.Feature()
-        ) {
+        sut = TestStore(initialState: AssetDetailsDomain.Feature.State(asset: fixtureAsset)) {
+            AssetDetailsDomain.Feature()
+        } withDependencies: {
             $0.historicalAssetRatesProvider = fakeHistoricalAssetRatesProvider
         }
     }

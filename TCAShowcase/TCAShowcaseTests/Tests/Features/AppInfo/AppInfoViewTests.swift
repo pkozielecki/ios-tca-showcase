@@ -19,7 +19,9 @@ final class AppInfoViewTest: XCTestCase {
 
     override func setUp() {
         UIView.setAnimationsEnabled(false)
-        fixtureStore = StoreOf<AppInfoDomain.Feature>(initialState: AppInfoDomain.Feature.State(), reducer: AppInfoDomain.Feature())
+        fixtureStore = StoreOf<AppInfoDomain.Feature>(initialState: AppInfoDomain.Feature.State()) {
+            AppInfoDomain.Feature()
+        }
         fixtureViewState = .checking
         sut = AppInfoView(store: fixtureStore)
         sut.viewStore = ViewStore(

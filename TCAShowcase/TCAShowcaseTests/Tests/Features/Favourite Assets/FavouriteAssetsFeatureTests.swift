@@ -12,7 +12,7 @@ import XCTest
 
 @MainActor
 class FavouriteAssetsFeatureTests: XCTestCase {
-    var sut: TestStore<FavouriteAssetsDomain.Feature.State, FavouriteAssetsDomain.Feature.Action, FavouriteAssetsDomain.Feature.State, FavouriteAssetsDomain.Feature.Action, Void>!
+    var sut: TestStore<FavouriteAssetsDomain.Feature.State, FavouriteAssetsDomain.Feature.Action>!
     var fixtureSelectedAssetsID = ["AU"]
     var fakeAssetsProvider: FakeAssetsProvider!
     var fakeRouter: FakeNavigationRouter!
@@ -22,10 +22,10 @@ class FavouriteAssetsFeatureTests: XCTestCase {
         fakeAssetsProvider = FakeAssetsProvider()
         fakeRouter = FakeNavigationRouter()
         testScheduler = DispatchQueue.test
-        sut = TestStore(
-            initialState: FavouriteAssetsDomain.Feature.State(selectedAssetsIDs: fixtureSelectedAssetsID),
-            reducer: FavouriteAssetsDomain.Feature()
-        ) {
+
+        sut = TestStore(initialState: FavouriteAssetsDomain.Feature.State(selectedAssetsIDs: fixtureSelectedAssetsID)) {
+            FavouriteAssetsDomain.Feature()
+        } withDependencies: {
             $0.assetsProvider = fakeAssetsProvider
             $0.router = fakeRouter
             $0.mainQueue = testScheduler.eraseToAnyScheduler()

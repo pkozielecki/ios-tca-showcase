@@ -7,7 +7,7 @@ import ComposableArchitecture
 import Foundation
 
 enum AppInfoDomain {
-    struct Feature: ReducerProtocol {
+    struct Feature: Reducer {
         struct State: Equatable {
             var viewState: AppInfoViewState = .checking
         }
@@ -24,33 +24,35 @@ enum AppInfoDomain {
         @Dependency(\.appVersionProvider) var appVersionProvider
         @Dependency(\.availableAppVersionProvider) var availableAppVersionProvider
 
-        func reduce(into state: inout State, action: Action) -> EffectOf<Feature> {
-            switch action {
+        var body: some ReducerOf<Self> {
+            Reduce { state, action in
+                switch action {
 
-            case .fetchLatestAppVersion:
-                state.viewState = .checking
-                return EffectTask.task {
-                    .latestAppVersionRetrieved(await availableAppVersionProvider.fetchLatestAppStoreVersion())
-                }
+                case .fetchLatestAppVersion:
+                    state.viewState = .checking
+                    return .run { send in
+                        await send(.latestAppVersionRetrieved(await availableAppVersionProvider.fetchLatestAppStoreVersion()))
+                    }
 
-            case let .latestAppVersionRetrieved(availableVersion):
-                let currentVersion = appVersionProvider.currentAppVersion
-                if currentVersion < availableVersion {
-                    state.viewState = .appUpdateAvailable(currentVersion: currentVersion, availableVersion: availableVersion)
-                } else {
-                    state.viewState = .appUpToDate(currentVersion: currentVersion)
-                }
-                return .none
+                case let .latestAppVersionRetrieved(availableVersion):
+                    let currentVersion = appVersionProvider.currentAppVersion
+                    if currentVersion < availableVersion {
+                        state.viewState = .appUpdateAvailable(currentVersion: currentVersion, availableVersion: availableVersion)
+                    } else {
+                        state.viewState = .appUpToDate(currentVersion: currentVersion)
+                    }
+                    return .none
 
-            case .goBackTapped:
-                return .fireAndForget {
-                    router.dismiss()
-                }
+                case .goBackTapped:
+                    return .run { _ in
+                        router.dismiss()
+                    }
 
-            case .updateAppTapped:
-                return .fireAndForget {
-                    router.dismiss()
-                    await openURL.callAsFunction(AppConfiguration.appstoreURL)
+                case .updateAppTapped:
+                    return .run { _ in
+                        router.dismiss()
+                        await openURL.callAsFunction(AppConfiguration.appstoreURL)
+                    }
                 }
             }
         }
