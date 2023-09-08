@@ -19,10 +19,9 @@ final class EditAssetViewTest: XCTestCase {
 
     override func setUp() {
         UIView.setAnimationsEnabled(false)
-        fixtureStore = StoreOf<EditAssetDomain.Feature>(
-            initialState: EditAssetDomain.Feature.State(editedAssetData: fixtureAssetData),
-            reducer: EditAssetDomain.Feature()
-        )
+        fixtureStore = StoreOf<EditAssetDomain.Feature>(initialState: EditAssetDomain.Feature.State(editedAssetData: fixtureAssetData)) {
+            EditAssetDomain.Feature()
+        }
         sut = EditAssetView(store: fixtureStore)
         sut.viewStore = ViewStore(
             fixtureStore,

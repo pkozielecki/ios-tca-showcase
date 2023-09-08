@@ -22,10 +22,9 @@ final class FavouriteAssetsViewTest: XCTestCase {
     override func setUp() {
         UIView.setAnimationsEnabled(false)
         fixtureSearchPhrase = ""
-        fixtureStore = StoreOf<FavouriteAssetsDomain.Feature>(
-            initialState: FavouriteAssetsDomain.Feature.State(selectedAssetsIDs: fixtureSelectedAssetsIDs),
-            reducer: FavouriteAssetsDomain.Feature()
-        )
+        fixtureStore = StoreOf<FavouriteAssetsDomain.Feature>(initialState: FavouriteAssetsDomain.Feature.State(selectedAssetsIDs: fixtureSelectedAssetsIDs)) {
+            FavouriteAssetsDomain.Feature()
+        }
         fixtureViewState = .loading
         sut = FavouriteAssetsView(store: fixtureStore)
         sut.viewStore = ViewStore(

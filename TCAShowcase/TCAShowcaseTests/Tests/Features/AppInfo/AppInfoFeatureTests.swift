@@ -11,7 +11,7 @@ import XCTest
 
 @MainActor
 class AppInfoFeatureTests: XCTestCase {
-    var sut: TestStore<AppInfoDomain.Feature.State, AppInfoDomain.Feature.Action, AppInfoDomain.Feature.State, AppInfoDomain.Feature.Action, Void>!
+    var sut: TestStore<AppInfoDomain.Feature.State, AppInfoDomain.Feature.Action>!
     var fakeNavigationRouter: FakeNavigationRouter!
     var fakeAppVersionProvider: FakeAppVersionProvider!
     var fakeAvailableAppVersionProvider: FakeAvailableAppVersionProvider!
@@ -22,7 +22,9 @@ class AppInfoFeatureTests: XCTestCase {
         fakeNavigationRouter = FakeNavigationRouter()
         fakeAppVersionProvider = FakeAppVersionProvider()
         fakeAvailableAppVersionProvider = FakeAvailableAppVersionProvider()
-        sut = TestStore(initialState: AppInfoDomain.Feature.State(), reducer: AppInfoDomain.Feature()) {
+        sut = TestStore(initialState: AppInfoDomain.Feature.State()) {
+            AppInfoDomain.Feature()
+        } withDependencies: {
             $0.router = fakeNavigationRouter
             $0.appVersionProvider = fakeAppVersionProvider
             $0.availableAppVersionProvider = fakeAvailableAppVersionProvider

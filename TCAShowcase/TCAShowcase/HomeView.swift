@@ -14,7 +14,7 @@ struct HomeView<Router: NavigationRouter>: View {
     init(store: StoreOf<AssetsListDomain.Feature>, router: Router) {
         self.store = store
         self.router = router
-        viewStore = ViewStore(store)
+        viewStore = ViewStore(store, observe: { .init(viewState: $0.viewState) })
     }
 
     var body: some View {

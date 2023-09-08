@@ -14,7 +14,7 @@ struct AssetDetailsView: View {
 
     init(store: StoreOf<AssetDetailsDomain.Feature>) {
         self.store = store
-        viewStore = ViewStore(store)
+        viewStore = ViewStore(store, observe: { .init(asset: $0.asset, viewState: $0.viewState) })
     }
 
     var body: some View {

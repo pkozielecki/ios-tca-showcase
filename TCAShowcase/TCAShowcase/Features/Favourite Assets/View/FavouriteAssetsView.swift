@@ -12,7 +12,7 @@ struct FavouriteAssetsView: View {
 
     init(store: StoreOf<FavouriteAssetsDomain.Feature>) {
         self.store = store
-        viewStore = ViewStore(store)
+        viewStore = ViewStore(store, observe: { .init(selectedAssetsIDs: $0.selectedAssetsIDs, viewState: $0.viewState) })
     }
 
     var body: some View {

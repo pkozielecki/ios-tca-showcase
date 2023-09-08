@@ -8,7 +8,7 @@ import ComposableArchitecture
 import Foundation
 
 enum AssetsListDomain {
-    struct Feature: ReducerProtocol {
+    struct Feature: Reducer {
 
         struct State: Equatable {
             // TODO: Think of a way to remove this property in favour of `manageFavouriteAssetsState`.
@@ -46,7 +46,7 @@ enum AssetsListDomain {
         @Dependency(\.favouriteAssetsManager) var favouriteAssetsManager
         @Dependency(\.assetRatesProvider) var assetsRatesProvider
 
-        var body: some ReducerProtocol<State, Action> {
+        var body: some ReducerOf<Self> {
             Reduce(core)
                 .ifLet(\.manageFavouriteAssetsState, action: /Action.addAssetsToFavourites) {
                     FavouriteAssetsDomain.Feature()
@@ -59,7 +59,7 @@ enum AssetsListDomain {
                 }
         }
 
-        func core(state: inout State, action: Action) -> EffectTask<Action> {
+        func core(state: inout State, action: Action) -> Effect<Action> {
             switch action {
 
                 // MARK: Assets list:
@@ -67,9 +67,9 @@ enum AssetsListDomain {
             case .assetsPerformanceRequested:
                 state.favouriteAssets = favouriteAssetsManager.retrieveFavouriteAssets()
                 state.viewState = .loading(state.favouriteAssets.map { FavouriteAssetCellView.Data(asset: $0) })
-                return EffectTask.task {
+                return .run { send in
                     let performance = await assetsRatesProvider.getAssetRates()
-                    return .loadAssetsPerformanceLoaded(performance)
+                    await send(.loadAssetsPerformanceLoaded(performance))
                 }
 
             case let .loadAssetsPerformanceLoaded(rates):
@@ -88,7 +88,7 @@ enum AssetsListDomain {
             case .addAssetsToFavouritesTapped:
                 let selectedAssetsIDs = state.favouriteAssets.map(\.id)
                 state.manageFavouriteAssetsState = FavouriteAssetsDomain.Feature.State(selectedAssetsIDs: selectedAssetsIDs)
-                return .fireAndForget {
+                return .run { _ in
                     router.presentedPopup = .addAsset
                 }
 
@@ -101,9 +101,9 @@ enum AssetsListDomain {
                 )
                 state.manageFavouriteAssetsState = nil
 
-                return EffectTask.task {
+                return .run { send in
                     favouriteAssetsManager.store(favouriteAssets: updatedFavouriteAssets)
-                    return .assetsPerformanceRequested
+                    await send(.assetsPerformanceRequested)
                 }
 
                 // MARK: Removing an asset:
@@ -111,30 +111,30 @@ enum AssetsListDomain {
             case let .deleteAssetRequested(id):
                 let asset = state.favouriteAssets.first { $0.id == id }
                 let assetName = asset?.name ?? ""
-                return .fireAndForget {
+                return .run { _ in
                     router.presentedAlert = .deleteAsset(assetId: id, assetName: assetName)
                 }
 
             case let .deleteAssetConfirmed(id):
                 state.favouriteAssets.removeAll { $0.id == id }
                 let assets = state.favouriteAssets
-                return EffectTask.task {
+                return .run { send in
                     favouriteAssetsManager.store(favouriteAssets: assets)
-                    return .assetsPerformanceRequested
+                    await send(.assetsPerformanceRequested)
                 }
 
                 // MARK: Asset details:
 
             case let .assetDetailsTapped(asset):
                 state.assetDetailsState = .init(asset: asset)
-                return .fireAndForget {
+                return .run { _ in
                     router.push(route: .assetDetails)
                 }
 
             case let .assetDetails(.assetSelectedForEdition(assetID)):
                 state.assetDetailsState = nil
-                return EffectTask.task {
-                    .editAssetTapped(id: assetID)
+                return .run { send in
+                    await send(.editAssetTapped(id: assetID))
                 }
 
                 // MARK: Editing asset:
@@ -150,7 +150,7 @@ enum AssetsListDomain {
                     totalAssetCount: state.favouriteAssets.count
                 )
                 state.editAssetState = .init(editedAssetData: data)
-                return .fireAndForget {
+                return .run { _ in
                     router.push(route: .editAsset)
                 }
 
@@ -159,15 +159,15 @@ enum AssetsListDomain {
                     return .none
                 }
                 state.editAssetState = nil
-                return EffectTask.task {
+                return .run { send in
                     favouriteAssetsManager.update(asset: updatedAsset)
-                    return .assetsPerformanceRequested
+                    await send(.assetsPerformanceRequested)
                 }
 
                 // MARK: App info:
 
             case .appInfoTapped:
-                return .fireAndForget {
+                return .run { _ in
                     router.presentedPopup = .appInfo
                 }
 

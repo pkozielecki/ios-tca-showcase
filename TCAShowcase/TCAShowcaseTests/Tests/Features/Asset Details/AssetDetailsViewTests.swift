@@ -20,10 +20,9 @@ final class AssetDetailsViewTest: XCTestCase {
 
     override func setUp() {
         UIView.setAnimationsEnabled(false)
-        fixtureStore = StoreOf<AssetDetailsDomain.Feature>(
-            initialState: AssetDetailsDomain.Feature.State(asset: fixtureAsset),
-            reducer: AssetDetailsDomain.Feature()
-        )
+        fixtureStore = StoreOf<AssetDetailsDomain.Feature>(initialState: AssetDetailsDomain.Feature.State(asset: fixtureAsset)) {
+            AssetDetailsDomain.Feature()
+        }
         fixtureViewState = .loading
         sut = AssetDetailsView(store: fixtureStore)
         sut.viewStore = ViewStore(

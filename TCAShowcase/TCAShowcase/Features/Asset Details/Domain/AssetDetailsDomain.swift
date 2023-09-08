@@ -7,7 +7,7 @@ import ComposableArchitecture
 import Foundation
 
 enum AssetDetailsDomain {
-    struct Feature: ReducerProtocol {
+    struct Feature: Reducer {
         struct State: Equatable {
             var asset: AssetDetailsViewData
             var viewState: AssetDetailsViewState = .loading
@@ -22,31 +22,33 @@ enum AssetDetailsDomain {
 
         @Dependency(\.historicalAssetRatesProvider) var historicalAssetRatesProvider
 
-        func reduce(into state: inout State, action: Action) -> EffectTask<Action> {
-            switch action {
+        var body: some ReducerOf<Self> {
+            Reduce { state, action in
+                switch action {
 
-            case let .fetchAssetHistoricalPerformance(scope):
-                let assetID = state.asset.id
-                return EffectTask.task {
-                    let rates = await historicalAssetRatesProvider.getHistoricalRates(for: assetID, range: scope)
-                    let data = rates.map {
-                        ChartView.ChartPoint(label: $0.date, value: $0.value)
+                case let .fetchAssetHistoricalPerformance(scope):
+                    let assetID = state.asset.id
+                    return Effect.run { send in
+                        let rates = await historicalAssetRatesProvider.getHistoricalRates(for: assetID, range: scope)
+                        let data = rates.map {
+                            ChartView.ChartPoint(label: $0.date, value: $0.value)
+                        }
+                        await send(.assetHistoricalPerformanceRetrieved(data))
                     }
-                    return .assetHistoricalPerformanceRetrieved(data)
+
+                case let .assetHistoricalPerformanceRetrieved(chartData):
+                    state.viewState = chartData.isEmpty ? .noData : .loaded(chartData)
+                    return .none
+
+                case .editAssetTapped:
+                    let id = state.asset.id
+                    return Effect.run { send in
+                        await send(.assetSelectedForEdition(id))
+                    }
+
+                default:
+                    return .none
                 }
-
-            case let .assetHistoricalPerformanceRetrieved(chartData):
-                state.viewState = chartData.isEmpty ? .noData : .loaded(chartData)
-                return .none
-
-            case .editAssetTapped:
-                let id = state.asset.id
-                return EffectTask.task {
-                    .assetSelectedForEdition(id)
-                }
-
-            default:
-                return .none
             }
         }
     }

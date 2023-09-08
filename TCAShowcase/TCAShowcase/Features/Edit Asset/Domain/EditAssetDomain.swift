@@ -6,7 +6,8 @@
 import ComposableArchitecture
 
 enum EditAssetDomain {
-    struct Feature: ReducerProtocol {
+    struct Feature: Reducer {
+
         struct State: Equatable {
             var editedAssetData: EditedAssetData
         }
@@ -18,20 +19,21 @@ enum EditAssetDomain {
 
         @Dependency(\.router) var router
 
-        func reduce(into state: inout State, action: Action) -> EffectOf<Feature> {
+        var body: some ReducerOf<Self> {
+            Reduce { state, action in
+                switch action {
 
-            switch action {
+                //  Changes confirmed:
+                case let .updateAssetTapped(updatedAssetData):
+                    state.editedAssetData = updatedAssetData
+                    return Effect.run { send in
+                        router.popAll()
+                        await send(.updateAsset)
+                    }
 
-            //  Changes confirmed:
-            case let .updateAssetTapped(updatedAssetData):
-                state.editedAssetData = updatedAssetData
-                return EffectTask.task {
-                    router.popAll()
-                    return .updateAsset
+                default:
+                    return .none
                 }
-
-            default:
-                return .none
             }
         }
     }

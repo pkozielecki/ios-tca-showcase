@@ -7,7 +7,7 @@ import ComposableArchitecture
 import Foundation
 
 enum FavouriteAssetsDomain {
-    struct Feature: ReducerProtocol {
+    struct Feature: Reducer {
         struct State: Equatable {
             var selectedAssetsIDs: [String]
             var assets: [Asset] = []
@@ -29,49 +29,55 @@ enum FavouriteAssetsDomain {
         @Dependency(\.router) var router
         @Dependency(\.mainQueue) var mainQueue
 
-        func reduce(into state: inout State, action: Action) -> EffectOf<Feature> {
-            switch action {
+        var body: some ReducerOf<Self> {
+            Reduce { state, action in
+                switch action {
 
-            // MARK: Downloads available assets to visualise them in the list (for user to choose from):
+                        // MARK: Downloads available assets to visualise them in the list (for user to choose from):
 
-            case .fetchAssets:
-                state.viewState = .loading
-                return EffectTask.task {
-                    .assetsFetched(await assetsProvider.fetchAssets())
-                }
-            case let .assetsFetched(assets):
-                state.assets = assets.sorted { $0.id < $1.id }
-                state.viewState = composeViewState(state: state)
-                return .none
+                case .fetchAssets:
+                    state.viewState = .loading
+                    return .run { send in
+                        await send(.assetsFetched(await assetsProvider.fetchAssets()))
+                    }
+                case let .assetsFetched(assets):
+                    state.assets = assets.sorted {
+                        $0.id < $1.id
+                    }
+                    state.viewState = composeViewState(state: state)
+                    return .none
 
-            // MARK: Search phrase changed:
+                        // MARK: Search phrase changed:
 
-            case let .searchPhraseChanged(phrase):
-                state.searchPhrase = phrase
-                return EffectTask.task {
-                    .applySearch
-                }
-                .debounce(id: Const.searchDebounceID, for: .milliseconds(Const.searchDebounceTime), scheduler: mainQueue)
-            case .applySearch:
-                state.viewState = composeViewState(state: state)
-                return .none
+                case let .searchPhraseChanged(phrase):
+                    state.searchPhrase = phrase
+                    return .run { send in
+                        await send(.applySearch)
+                    }
+                    .debounce(id: Const.searchDebounceID, for: .milliseconds(Const.searchDebounceTime), scheduler: mainQueue)
+                case .applySearch:
+                    state.viewState = composeViewState(state: state)
+                    return .none
 
-            // MARK: Selects / Deselects an asset:
+                        // MARK: Selects / Deselects an asset:
 
-            case let .selectAsset(id):
-                if !state.selectedAssetsIDs.contains(id) {
-                    state.selectedAssetsIDs.append(id)
-                } else {
-                    state.selectedAssetsIDs.removeAll { $0 == id }
-                }
-                state.viewState = composeViewState(state: state)
-                return .none
+                case let .selectAsset(id):
+                    if !state.selectedAssetsIDs.contains(id) {
+                        state.selectedAssetsIDs.append(id)
+                    } else {
+                        state.selectedAssetsIDs.removeAll {
+                            $0 == id
+                        }
+                    }
+                    state.viewState = composeViewState(state: state)
+                    return .none
 
-            // MARK: Selected assets are confirmed or user cancelled:
+                        // MARK: Selected assets are confirmed or user cancelled:
 
-            case .confirmAssetsSelection, .cancel:
-                return .fireAndForget {
-                    router.dismiss()
+                case .confirmAssetsSelection, .cancel:
+                    return .run { _ in
+                        router.dismiss()
+                    }
                 }
             }
         }
